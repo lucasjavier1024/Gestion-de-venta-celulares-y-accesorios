@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStock Pro - Sistema de Gestión Comercial</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2pdf.js CDN para generación de facturas y presupuestos en PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- NOTIFICACIÓN FLOTANTE (TOAST) -->
+  <div id="toast" class="fixed top-5 right-5 z-50 transform transition-all duration-300 translate-y-[-150%] opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+    <span id="toast-icon" class="font-bold">✓</span>
+    <span id="toast-message" class="text-sm font-medium">Operación exitosa</span>
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        
+        <!-- Logo y Nombre Comercial -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div id="business-logo-container" class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-inner">
+            <svg id="default-logo-icon" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            <img id="custom-logo-img" class="w-full h-full object-cover hidden" alt="Logo">
+          </div>
+          <div class="truncate">
+            <h1 id="business-name-display" class="text-sm sm:text-base font-bold tracking-tight truncate">TechStock Pro</h1>
+            <p id="business-slogan-display" class="text-[11px] text-slate-400 truncate">Sistemas & Comunicaciones</p>
+          </div>
+        </div>
+
+        <!-- Selector de Rol Activo -->
+        <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+          <span class="text-xs text-slate-400 hidden sm:inline">Rol:</span>
+          <select id="role-selector" onchange="changeUserRole(this.value)" class="bg-transparent text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer">
+            <option value="admin" class="bg-slate-800 text-white">👑 Administrador</option>
+            <option value="vendedor" class="bg-slate-800 text-white">💼 Vendedor</option>
+            <option value="cajero" class="bg-slate-800 text-white">💵 Cajero</option>
+          </select>
+        </div>
+
+        <!-- Pestañas de Menú (Scrollable en teléfonos) -->
+        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+          <nav class="flex space-x-1 flex-nowrap">
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white whitespace-nowrap">
+              Inventario
+            </button>
+            <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+              Ventas
+            </button>
+            <button onclick="switchTab('purchases')" id="tab-purchases" class="tab-btn role-perm-purchases px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+              Compras
+            </button>
+            <button onclick="switchTab('technical-service')" id="tab-technical-service" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+              Taller & Garantías
+            </button>
+            <button onclick="switchTab('crm')" id="tab-crm" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+              CRM Clientes
+            </button>
+            <button onclick="switchTab('balance')" id="tab-balance" class="tab-btn role-perm-balance px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+              Reportes & Exportar
+            </button>
+            <button onclick="openBusinessModal()" id="btn-config" class="role-perm-config p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Configurar Perfil de Negocio">
+              ⚙️
+            </button>
+          </nav>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ALERTA DINÁMICA DE STOCK CRÍTICO -->
+  <div id="low-stock-banner" class="hidden bg-amber-500 text-slate-900 px-4 py-2 font-medium text-xs sm:text-sm shadow-sm">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <span class="flex items-center gap-2">
+        <span class="text-base">⚠️</span>
+        Hay <strong id="low-stock-count">0</strong> productos en stock mínimo o agotados.
+      </span>
+      <button onclick="filterCriticalStockOnly()" class="underline hover:text-white text-xs font-bold">Ver Críticos</button>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- SECCIÓN 1: INVENTARIO / CATÁLOGO -->
+    <section id="section-inventory" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Formulario (Solo Administrador) -->
+        <div id="product-form-container" class="role-perm-inventory-form bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Alta de Producto
+          </h2>
+          <form id="product-form" onsubmit="handleProductSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Tipo de Mercadería</label>
+              <select id="prod-type" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <option value="Celular">Celular (Requiere IMEI en venta)</option>
+                <option value="Accesorio">Accesorio (Código de Barra)</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Marca</label>
+                <input type="text" id="prod-brand" placeholder="Samsung, Apple" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Modelo</label>
+                <input type="text" id="prod-model" placeholder="Galaxy S23, Funda TPU" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Código / Referencia / Lote</label>
+              <input type="text" id="prod-code" placeholder="Código de barra o ID" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo Unitario ($)</label>
+                <input type="number" step="0.01" min="0" id="prod-cost" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio Venta ($)</label>
+                <input type="number" step="0.01" min="0" id="prod-price" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stock Inicial</label>
+                <input type="number" min="0" id="prod-stock" placeholder="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-amber-600 mb-1">Stock Mínimo (Alerta)</label>
+                <input type="number" min="1" id="prod-min-stock" value="2" required class="w-full bg-amber-50/50 border border-amber-300 rounded-lg p-2.5 text-sm">
+              </div>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+              Guardar en Inventario
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabla Catálogo -->
+        <div id="inventory-table-container" class="lg:col-span-2 space-y-4">
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div class="relative w-full sm:w-80">
+              <input type="text" id="search-inventory" oninput="renderInventory()" placeholder="Buscar por marca, modelo o código..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none">
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="btn-toggle-critical" onclick="toggleCriticalFilter()" class="text-xs px-3 py-2 rounded-lg border border-amber-300 bg-amber-50 text-amber-800 font-semibold hover:bg-amber-100 transition">
+                ⚠️ Solo Stock Bajo
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                    <th class="p-3.5">Producto</th>
+                    <th class="p-3.5">Código / Ref</th>
+                    <th class="p-3.5 text-right col-cost">Costo</th>
+                    <th class="p-3.5 text-right">Precio</th>
+                    <th class="p-3.5 text-center">Stock</th>
+                    <th class="p-3.5 text-center col-actions">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+            <div id="inventory-empty" class="hidden p-8 text-center text-slate-400 text-sm">
+              No hay productos registrados o coincidentes.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: PUNTO DE VENTA Y FACTURACIÓN -->
+    <section id="section-sales" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Formulario Venta -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Punto de Venta
+          </h2>
+          <form id="sale-form" onsubmit="handleSaleSubmit(event)" class="space-y-3.5">
+            
+            <!-- Selección de Cliente CRM -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-semibold uppercase text-slate-500">Cliente (CRM)</label>
+                <button type="button" onclick="openCustomerModal()" class="text-xs text-indigo-600 font-semibold hover:underline">+ Nuevo</button>
+              </div>
+              <select id="sale-customer-id" onchange="onCustomerSelectForSale()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+              <div id="sale-customer-badge" class="mt-1.5 hidden flex items-center justify-between text-[11px] p-2 rounded-lg bg-indigo-50 text-indigo-800">
+                <span id="sale-customer-segment-text">Segmento: Minorista</span>
+                <span id="sale-customer-discount-text" class="font-bold">0% Desc.</span>
+              </div>
+            </div>
+
+            <!-- Selección de Producto -->
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Producto en Stock</label>
+              <select id="sale-product-id" onchange="onSaleProductChange()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+            </div>
+
+            <!-- CONTROL DE IMEI Y GARANTÍA -->
+            <div id="imei-field-group" class="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl space-y-2 hidden">
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-bold uppercase text-indigo-900">IMEI del Celular (15 dígitos)</label>
+                <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded font-mono">Trazabilidad</span>
+              </div>
+              <input type="text" id="sale-imei" maxlength="18" placeholder="Ingrese IMEI físico del equipo" class="w-full bg-white border border-indigo-300 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Meses Garantía</label>
+                  <select id="sale-warranty-months" class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs">
+                    <option value="3">3 meses</option>
+                    <option value="6" selected>6 meses</option>
+                    <option value="12">12 meses (1 año)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Condición</label>
+                  <select id="sale-phone-condition" class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs">
+                    <option value="Nuevo Sellado">Nuevo Sellado</option>
+                    <option value="Seminuevo / Usado">Seminuevo / Usado</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cantidad, Precio Base y Descuento -->
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cant.</label>
+                <input type="number" min="1" id="sale-qty" value="1" oninput="calculateSaleTotalPreview()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio ($)</label>
+                <input type="number" step="0.01" min="0" id="sale-base-price" oninput="calculateSaleTotalPreview()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Desc. (%)</label>
+                <input type="number" step="0.5" min="0" max="100" id="sale-discount-pct" value="0" oninput="calculateSaleTotalPreview()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm">
+              </div>
+            </div>
+
+            <!-- Total y Margen en Vivo -->
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div class="flex justify-between items-center text-sm font-bold text-slate-900">
+                <span>Total a Cobrar:</span>
+                <span id="sale-final-total-display" class="text-base text-indigo-600">$ 0.00</span>
+              </div>
+              <div id="live-margin-preview" class="role-perm-margins text-[11px] flex justify-between text-emerald-700 font-medium">
+                <span>Margen estimado:</span>
+                <span id="live-margin-text">$0.00 (0%)</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Medio de Pago</label>
+              <select id="sale-payment" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia Bancaria</option>
+                <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+              </select>
+            </div>
+
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+              Emitir Venta
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabla Historial Ventas con WhatsApp y PDF -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="p-4 border-b border-slate-200 font-semibold text-slate-800 flex justify-between items-center">
+            <span>Registro de Salidas y Facturación</span>
+            <span class="text-xs text-slate-500">Trazabilidad activa</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                  <th class="p-3.5">Fecha / Cliente</th>
+                  <th class="p-3.5">Detalle / IMEI</th>
+                  <th class="p-3.5 text-center">Cant.</th>
+                  <th class="p-3.5 text-right">Total</th>
+                  <th class="p-3.5 text-right role-perm-margins">Margen ($)</th>
+                  <th class="p-3.5 text-center">Comprobante</th>
+                </tr>
+              </thead>
+              <tbody id="sales-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+          <div id="sales-empty" class="hidden p-8 text-center text-slate-400 text-sm">Sin ventas registradas.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: COMPRAS (ENTRADAS DE MERCADERÍA) -->
+    <section id="section-purchases" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            Ingreso de Mercadería
+          </h2>
+          <form id="purchase-form" onsubmit="handlePurchaseSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Proveedor / Distribuidor</label>
+              <input type="text" id="pur-supplier" placeholder="Mayorista Tech" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Producto</label>
+              <select id="pur-product-id" onchange="autoFillPurchaseCost()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cantidad</label>
+                <input type="number" min="1" id="pur-qty" placeholder="1" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo Unit. ($)</label>
+                <input type="number" step="0.01" min="0" id="pur-cost" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha</label>
+              <input type="date" id="pur-date" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+              Registrar Compra y Sumar Stock
+            </button>
+          </form>
+        </div>
+
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="p-4 border-b border-slate-200 font-semibold text-slate-800">Historial de Compras</div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                  <th class="p-3.5">Fecha</th>
+                  <th class="p-3.5">Proveedor</th>
+                  <th class="p-3.5">Producto</th>
+                  <th class="p-3.5 text-center">Cant.</th>
+                  <th class="p-3.5 text-right">Costo U.</th>
+                  <th class="p-3.5 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody id="purchases-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: SERVICIO TÉCNICO & TALLER -->
+    <section id="section-technical-service" class="hidden space-y-6">
+      
+      <!-- Contadores de Taller -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-400 font-semibold">PENDIENTES</span>
+          <h3 id="stat-repairs-pending" class="text-xl font-bold text-amber-600">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-400 font-semibold">EN REPARACIÓN</span>
+          <h3 id="stat-repairs-progress" class="text-xl font-bold text-blue-600">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-400 font-semibold">LISTOS / REPARADOS</span>
+          <h3 id="stat-repairs-done" class="text-xl font-bold text-emerald-600">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-400 font-semibold">ENTREGADOS</span>
+          <h3 id="stat-repairs-delivered" class="text-xl font-bold text-slate-600">0</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Formulario Orden de Reparación -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>🔧</span> Nueva Orden de Taller
+          </h2>
+          <form id="repair-form" onsubmit="handleRepairSubmit(event)" class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cliente</label>
+              <select id="repair-customer-id" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Equipo (Marca & Modelo)</label>
+              <input type="text" id="repair-device" placeholder="iPhone 13, Moto G52" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">IMEI o N° de Serie</label>
+              <div class="flex gap-2">
+                <input type="text" id="repair-imei" placeholder="IMEI del equipo" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-mono">
+                <button type="button" onclick="checkWarrantyFromRepairForm()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 border text-xs font-semibold rounded-lg text-slate-700 whitespace-nowrap">
+                  Comprobar
+                </button>
+              </div>
+            </div>
+
+            <!-- Indicador dinámico de Garantía -->
+            <div id="repair-warranty-status" class="hidden text-xs p-2 rounded-lg font-medium"></div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Falla Reportada</label>
+              <textarea id="repair-fault" rows="2" placeholder="Rotura de módulo, no carga pin USB..." required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Presupuesto ($)</label>
+                <input type="number" step="0.01" min="0" id="repair-cost" value="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">¿Cubre Garantía?</label>
+                <select id="repair-is-warranty" onchange="onWarrantyToggleChange()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium">
+                  <option value="false">No (Particular)</option>
+                  <option value="true">Sí (Garantía Local)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+              Generar Ticket de Taller
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabla Órdenes de Reparación -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <h3 class="font-bold text-slate-800">Órdenes de Reparación & Taller</h3>
+            <div class="flex gap-2">
+              <select id="filter-repair-status" onchange="renderRepairs()" class="text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 font-medium">
+                <option value="todos">Todos los Estados</option>
+                <option value="Pendiente">Pendientes</option>
+                <option value="En reparación">En reparación</option>
+                <option value="Reparado">Reparados</option>
+                <option value="Entregado">Entregados</option>
+              </select>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                  <th class="p-3.5">Ticket / Fecha</th>
+                  <th class="p-3.5">Cliente & Equipo</th>
+                  <th class="p-3.5">Falla & Garantía</th>
+                  <th class="p-3.5 text-right">Costo</th>
+                  <th class="p-3.5 text-center">Estado</th>
+                  <th class="p-3.5 text-center">Aviso WhatsApp</th>
+                </tr>
+              </thead>
+              <tbody id="repairs-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+          <div id="repairs-empty" class="hidden p-8 text-center text-slate-400 text-sm">
+            No se registran equipos ingresados a reparación.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 5: CRM BÁSICO & MARKETING -->
+    <section id="section-crm" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Directorio de Clientes & CRM</h2>
+          <p class="text-xs text-slate-500">Historial de compras, segmentación y envío de promociones por WhatsApp.</p>
+        </div>
+        <button onclick="openCustomerModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-1.5">
+          <span>+</span> Registrar Nuevo Cliente
+        </button>
+      </div>
+
+      <!-- Tabla Clientes -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div class="relative w-full sm:w-80">
+            <input type="text" id="search-crm" oninput="renderCRM()" placeholder="Buscar por nombre o teléfono..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-500">Segmento:</span>
+            <select id="filter-crm-segment" onchange="renderCRM()" class="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1.5 font-medium">
+              <option value="todos">Todos los Segmentos</option>
+              <option value="Mayorista">Mayoristas</option>
+              <option value="Frecuente">Frecuentes</option>
+              <option value="Minorista">Minoristas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <th class="p-3.5">Cliente</th>
+                <th class="p-3.5">Contacto</th>
+                <th class="p-3.5 text-center">Segmento</th>
+                <th class="p-3.5 text-center">Descuento</th>
+                <th class="p-3.5 text-right">Total Facturado</th>
+                <th class="p-3.5 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="crm-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 6: REPORTES, BALANCE Y EXPORTACIONES -->
+    <section id="section-balance" class="hidden space-y-6">
+      
+      <!-- CENTRO DE EXPORTACIÓN A EXCEL/CSV -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-bold flex items-center gap-2">
+            <span>📊</span> Centro de Exportación a Excel / CSV
+          </h3>
+          <p class="text-xs text-slate-300 mt-1">Descarga planillas con caracteres en español (BOM UTF-8) listas para abrir en Excel.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="exportData('inventory')" class="bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+            📥 Inventario (.CSV)
+          </button>
+          <button onclick="exportData('sales')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1.5">
+            📥 Ventas (.CSV)
+          </button>
+          <button onclick="exportData('purchases')" class="role-perm-purchases bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+            📥 Compras (.CSV)
+          </button>
+          <button onclick="exportData('customers')" class="bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+            📥 Clientes CRM (.CSV)
+          </button>
+          <button onclick="exportData('repairs')" class="bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+            📥 Reparaciones (.CSV)
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjetas Financieras -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-xs font-semibold uppercase text-slate-400">Total Ventas</p>
+          <h3 id="stat-total-sales" class="text-2xl font-bold text-slate-900 mt-1">$0.00</h3>
+          <span class="text-[11px] text-slate-500">Ingresos brutos acumulados</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm role-perm-purchases">
+          <p class="text-xs font-semibold uppercase text-slate-400">Total Compras</p>
+          <h3 id="stat-total-purchases" class="text-2xl font-bold text-slate-900 mt-1">$0.00</h3>
+          <span class="text-[11px] text-slate-500">Costo de mercadería</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm role-perm-margins">
+          <p class="text-xs font-semibold uppercase text-slate-400">Ganancia Neta Real</p>
+          <h3 id="stat-net-profit" class="text-2xl font-bold text-emerald-600 mt-1">$0.00</h3>
+          <span class="text-[11px] text-emerald-700">Margen real de lo vendido</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm role-perm-margins">
+          <p class="text-xs font-semibold uppercase text-slate-400">Margen Promedio</p>
+          <h3 id="stat-avg-margin" class="text-2xl font-bold text-indigo-600 mt-1">0%</h3>
+          <span class="text-[11px] text-indigo-700">Rentabilidad media comercial</span>
+        </div>
+      </div>
+
+      <!-- Historial Global Cronológico -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-4 border-b border-slate-200 font-semibold text-slate-800">
+          Auditoría Cronológica de Flujo Comercial
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <th class="p-3.5">Fecha</th>
+                <th class="p-3.5">Tipo</th>
+                <th class="p-3.5">Detalle Operación</th>
+                <th class="p-3.5 text-center">Unidades</th>
+                <th class="p-3.5 text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: VENTA EXITOSA (WHATSAPP Y PDF) -->
+  <div id="sale-success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-center">
+      <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+        ✓
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">¡Venta Registrada con Éxito!</h3>
+        <p class="text-xs text-slate-500 mt-1">El stock fue descontado. ¿Cómo deseas emitir el comprobante?</p>
+      </div>
+
+      <div class="space-y-2 pt-2">
+        <button id="btn-success-whatsapp" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 shadow transition">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          Enviar Comprobante por WhatsApp
+        </button>
+
+        <button id="btn-success-pdf" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 shadow transition">
+          <span>📄</span> Descargar Factura / Ticket en PDF
+        </button>
+
+        <button onclick="closeSaleSuccessModal()" class="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2 rounded-xl text-sm transition">
+          Finalizar y Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MENSAJES Y PROMOS WHATSAPP -->
+  <div id="promo-whatsapp-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <span>📲</span> WhatsApp Marketing & Avisos
+        </h3>
+        <button onclick="closePromoModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Destinatario</label>
+          <input type="text" id="promo-client-name" readonly class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2.5 text-sm font-semibold">
+          <input type="hidden" id="promo-client-phone">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Plantilla Rápida</label>
+          <select id="promo-template-select" onchange="applyPromoTemplate()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs">
+            <option value="promo_accesorios">Promoción Especial en Accesorios</option>
+            <option value="ingreso_equipos">Nuevos Modelos de Celulares Disponibles</option>
+            <option value="saludo_frecuente">Beneficio por Cliente Frecuente</option>
+            <option value="personalizado">Mensaje Personalizado</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Mensaje</label>
+          <textarea id="promo-custom-text" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs focus:outline-none"></textarea>
+        </div>
+        <button onclick="sendPromoWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow transition">
+          Abrir Chat en WhatsApp 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANTILLA OCULTA PARA FACTURAS EN PDF -->
+  <div id="pdf-printable-template" class="hidden bg-white p-8 max-w-2xl mx-auto text-slate-900 border border-slate-200">
+    <div class="flex justify-between items-start border-b pb-4 mb-4">
+      <div class="flex items-center gap-3">
+        <div id="pdf-logo-box" class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
+          <img id="pdf-logo-img" class="w-full h-full object-cover hidden">
+          <span id="pdf-logo-text">TS</span>
+        </div>
+        <div>
+          <h2 id="pdf-biz-name" class="text-lg font-bold text-slate-900">TechStock Pro</h2>
+          <p id="pdf-biz-slogan" class="text-xs text-slate-500">Venta, CRM & Garantías</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <span class="text-xs uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">Comprobante Oficial</span>
+        <p id="pdf-voucher-id" class="text-xs font-mono font-bold mt-1">#REC-0000</p>
+        <p id="pdf-voucher-date" class="text-[11px] text-slate-500">Fecha: --/--/----</p>
+      </div>
+    </div>
+
+    <div class="bg-slate-50 p-3 rounded-xl mb-4 text-xs space-y-1">
+      <div class="flex justify-between">
+        <span><strong>Cliente:</strong> <span id="pdf-cust-name">--</span></span>
+        <span><strong>Medio de Pago:</strong> <span id="pdf-payment-method">--</span></span>
+      </div>
+      <div id="pdf-imei-container" class="border-t pt-1 mt-1 text-[11px] text-indigo-900 hidden">
+        <strong>Control de IMEI:</strong> <span id="pdf-device-imei" class="font-mono">--</span> | <strong>Garantía:</strong> <span id="pdf-device-warranty">--</span>
+      </div>
+    </div>
+
+    <table class="w-full text-left text-xs mb-6 border-collapse">
+      <thead>
+        <tr class="border-b bg-slate-100 text-slate-700">
+          <th class="p-2">Descripción del Producto</th>
+          <th class="p-2 text-center">Cant.</th>
+          <th class="p-2 text-right">Precio Unit.</th>
+          <th class="p-2 text-right">Desc.</th>
+          <th class="p-2 text-right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b">
+          <td id="pdf-item-name" class="p-2 font-medium">--</td>
+          <td id="pdf-item-qty" class="p-2 text-center">1</td>
+          <td id="pdf-item-price" class="p-2 text-right">$0.00</td>
+          <td id="pdf-item-disc" class="p-2 text-right">0%</td>
+          <td id="pdf-item-total" class="p-2 text-right font-bold">$0.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="flex justify-end mb-6">
+      <div class="w-48 text-xs space-y-1 text-right">
+        <div class="flex justify-between font-bold text-sm border-t pt-2 text-slate-900">
+          <span>TOTAL:</span>
+          <span id="pdf-total-amount">$0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t pt-3 text-[10px] text-slate-500 space-y-1">
+      <p><strong>Condiciones de Garantía:</strong> La cobertura aplica sobre fallas de fabricación. No cubre roturas de display, golpes, ingreso de líquidos o manipulación por personal no autorizado.</p>
+      <p class="text-center pt-2">¡Gracias por su compra! Conserve este comprobante para gestionar su garantía.</p>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR / EDITAR CLIENTE (CRM) -->
+  <div id="customer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-base font-bold text-slate-900">Registrar / Editar Cliente</h3>
+        <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+      </div>
+      <form id="customer-form" onsubmit="handleCustomerSubmit(event)" class="space-y-3.5">
+        <input type="hidden" id="cust-id">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre Completo / Razón Social</label>
+          <input type="text" id="cust-name" required placeholder="Ej: Juan Perez o TecnoStore SRL" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">WhatsApp (con cód. país)</label>
+            <input type="text" id="cust-phone" required placeholder="Ej: 5491112345678" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">DNI / CUIT</label>
+            <input type="text" id="cust-dni" placeholder="Identificación fiscal" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Segmento</label>
+            <select id="cust-segment" onchange="autoSuggestSegmentDiscount()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium">
+              <option value="Minorista">Minorista</option>
+              <option value="Frecuente">Cliente Frecuente</option>
+              <option value="Mayorista">Mayorista / Gremio</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">% Descuento Fijo</label>
+            <input type="number" step="0.5" min="0" max="100" id="cust-discount" value="0" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Notas / Preferencias</label>
+          <input type="text" id="cust-notes" placeholder="Ej: Compra siempre accesorios Samsung" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeCustomerModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Guardar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: HISTORIAL DE COMPRAS (CRM) -->
+  <div id="customer-history-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center border-b pb-3">
+        <div>
+          <h3 id="history-modal-cust-name" class="text-base font-bold text-slate-900">Historial de Compras</h3>
+          <p id="history-modal-cust-segment" class="text-xs text-slate-400">Segmento</p>
+        </div>
+        <button onclick="closeCustomerHistoryModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+      </div>
+
+      <div class="overflow-y-auto flex-1">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="bg-slate-50 border-b text-slate-500 uppercase font-semibold">
+              <th class="p-2.5">Fecha</th>
+              <th class="p-2.5">Producto</th>
+              <th class="p-2.5 font-mono">IMEI</th>
+              <th class="p-2.5 text-center">Garantía</th>
+              <th class="p-2.5 text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody id="customer-history-tbody" class="divide-y divide-slate-100"></tbody>
+        </table>
+        <div id="customer-history-empty" class="hidden p-6 text-center text-slate-400 text-xs">
+          Este cliente aún no registra compras en el local.
+        </div>
+      </div>
+      
+      <div class="border-t pt-3 flex justify-between items-center text-xs font-bold text-slate-800">
+        <span>Total Acumulado:</span>
+        <span id="history-modal-total" class="text-sm text-emerald-600">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURAR NEGOCIO -->
+  <div id="business-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-base font-bold text-slate-900">Personalizar Negocio</h3>
+        <button onclick="closeBusinessModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+      </div>
+      <form onsubmit="saveBusinessProfile(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre Comercial</label>
+          <input type="text" id="input-biz-name" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Subtítulo / Rubro</label>
+          <input type="text" id="input-biz-slogan" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Logo</label>
+          <input type="file" id="input-biz-logo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeBusinessModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR PRODUCTO -->
+  <div id="edit-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-base font-bold text-slate-900">Editar Producto</h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+      </div>
+      <form id="edit-product-form" onsubmit="handleEditProductSubmit(event)" class="space-y-3">
+        <input type="hidden" id="edit-id">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Tipo</label>
+          <select id="edit-type" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <option value="Celular">Celular</option>
+            <option value="Accesorio">Accesorio</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Marca</label>
+            <input type="text" id="edit-brand" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Modelo</label>
+            <input type="text" id="edit-model" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Código / Ref</label>
+          <input type="text" id="edit-code" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo ($)</label>
+            <input type="number" step="0.01" min="0" id="edit-cost" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Venta ($)</label>
+            <input type="number" step="0.01" min="0" id="edit-price" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stock</label>
+            <input type="number" min="0" id="edit-stock" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-amber-600 mb-1">Stock Mínimo</label>
+            <input type="number" min="1" id="edit-min-stock" required class="w-full bg-amber-50/50 border border-amber-300 rounded-lg p-2.5 text-sm">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT INTEGRADA -->
+  <script>
+    const STORAGE_KEY_PRODUCTS = 'techstock_products_final';
+    const STORAGE_KEY_PURCHASES = 'techstock_purchases_final';
+    const STORAGE_KEY_SALES = 'techstock_sales_final';
+    const STORAGE_KEY_CUSTOMERS = 'techstock_customers_final';
+    const STORAGE_KEY_REPAIRS = 'techstock_repairs_final';
+    const STORAGE_KEY_BIZ = 'techstock_biz_profile_final';
+    const STORAGE_KEY_ROLE = 'techstock_role_final';
+
+    let currentRole = localStorage.getItem(STORAGE_KEY_ROLE) || 'admin';
+    let filterOnlyCritical = false;
+
+    let products = JSON.parse(localStorage.getItem(STORAGE_KEY_PRODUCTS)) || [];
+    let purchases = JSON.parse(localStorage.getItem(STORAGE_KEY_PURCHASES)) || [];
+    let sales = JSON.parse(localStorage.getItem(STORAGE_KEY_SALES)) || [];
+    let customers = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOMERS)) || [];
+    let repairs = JSON.parse(localStorage.getItem(STORAGE_KEY_REPAIRS)) || [];
+    let businessProfile = JSON.parse(localStorage.getItem(STORAGE_KEY_BIZ)) || {
+      name: 'TechStock Pro',
+      slogan: 'Venta, CRM & Garantías',
+      logo: null
+    };
+
+    // Datos iniciales de demostración
+    if (products.length === 0 && customers.length === 0) {
+      customers = [
+        { id: 'c1', name: 'Juan Manuel Perez', phone: '5491145678901', dni: '34.891.200', segment: 'Frecuente', discount: 5, notes: 'Cliente preferencial' },
+        { id: 'c2', name: 'Distribuidora Nova SRL', phone: '5491198765432', dni: '30-71829102-4', segment: 'Mayorista', discount: 12, notes: 'Compras al por mayor' },
+        { id: 'c3', name: 'Lucía Gómez', phone: '5491123456789', dni: '38.102.934', segment: 'Minorista', discount: 0, notes: 'Cliente particular' }
+      ];
+
+      products = [
+        { id: 'p1', type: 'Celular', brand: 'Samsung', model: 'Galaxy A54 5G', imeiCode: 'SAM-A54-BK', costPrice: 280, salePrice: 420, stock: 3, minStock: 3 },
+        { id: 'p2', type: 'Celular', brand: 'Apple', model: 'iPhone 13 128GB', imeiCode: 'IPH-13-128', costPrice: 620, salePrice: 860, stock: 5, minStock: 2 },
+        { id: 'p3', type: 'Accesorio', brand: 'Anker', model: 'Cargador Carga Rápida 25W', imeiCode: 'ANK-25W-W', costPrice: 10, salePrice: 24, stock: 1, minStock: 4 }
+      ];
+
+      purchases = [
+        { id: 'pur1', date: '2024-03-01', supplier: 'Tech Distribuciones', productId: 'p1', productName: 'Samsung Galaxy A54 5G', quantity: 4, unitCost: 280, total: 1120 }
+      ];
+
+      sales = [
+        {
+          id: 'sal1',
+          date: '2024-03-05',
+          customerId: 'c1',
+          customerName: 'Juan Manuel Perez',
+          customerPhone: '5491145678901',
+          productId: 'p1',
+          productName: 'Samsung Galaxy A54 5G',
+          isPhone: true,
+          imei: '354896102345678',
+          warrantyMonths: 6,
+          warrantyExpiration: '2024-09-05',
+          condition: 'Nuevo Sellado',
+          quantity: 1,
+          basePrice: 420,
+          discountPct: 5,
+          unitPrice: 399,
+          unitCost: 280,
+          profit: 119,
+          marginPct: 29.8,
+          total: 399,
+          paymentMethod: 'Transferencia'
+        }
+      ];
+
+      repairs = [
+        {
+          id: 'rep1',
+          ticket: 'ST-1001',
+          date: '2024-03-07',
+          customerId: 'c1',
+          customerName: 'Juan Manuel Perez',
+          customerPhone: '5491145678901',
+          device: 'Samsung Galaxy A54 5G',
+          imei: '354896102345678',
+          fault: 'No detecta carga rápida en pin USB',
+          cost: 0,
+          isWarranty: true,
+          status: 'En reparación'
+        }
+      ];
+
+      saveAll();
+    }
+
+    function saveAll() {
+      localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      localStorage.setItem(STORAGE_KEY_PURCHASES, JSON.stringify(purchases));
+      localStorage.setItem(STORAGE_KEY_SALES, JSON.stringify(sales));
+      localStorage.setItem(STORAGE_KEY_CUSTOMERS, JSON.stringify(customers));
+      localStorage.setItem(STORAGE_KEY_REPAIRS, JSON.stringify(repairs));
+    }
+
+    const formatMoney = (val) => '$ ' + Number(val || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function cleanPhone(phone) {
+      if (!phone) return '';
+      return phone.toString().replace(/[^0-9]/g, '');
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = message;
+      document.getElementById('toast-icon').innerText = isError ? '✕' : '✓';
+      toast.className = `fixed top-5 right-5 z-50 transform transition-all duration-300 translate-y-0 opacity-100 ${isError ? 'bg-rose-600' : 'bg-slate-900'} text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3`;
+      setTimeout(() => {
+        toast.className = toast.className.replace('translate-y-0 opacity-100', 'translate-y-[-150%] opacity-0');
+      }, 3000);
+    }
+
+    // --- ROLES Y ACCESOS ---
+    function changeUserRole(newRole) {
+      currentRole = newRole;
+      localStorage.setItem(STORAGE_KEY_ROLE, newRole);
+      applyRolePermissions();
+      showToast(`Modo cambiado: ${newRole.toUpperCase()}`);
+    }
+
+    function applyRolePermissions() {
+      document.getElementById('role-selector').value = currentRole;
+      const isAdmin = currentRole === 'admin';
+      const isCajero = currentRole === 'cajero';
+
+      document.querySelectorAll('.role-perm-purchases').forEach(el => el.style.display = isAdmin ? '' : 'none');
+      document.querySelectorAll('.role-perm-balance').forEach(el => el.style.display = (isAdmin || isCajero) ? '' : 'none');
+      document.querySelectorAll('.role-perm-config').forEach(el => el.style.display = isAdmin ? '' : 'none');
+      document.querySelectorAll('.role-perm-margins').forEach(el => el.style.display = isAdmin ? '' : 'none');
+      document.querySelectorAll('.col-cost').forEach(el => el.style.display = isAdmin ? '' : 'none');
+      document.querySelectorAll('.role-perm-inventory-form').forEach(el => el.style.display = isAdmin ? '' : 'none');
+      document.querySelectorAll('.col-actions').forEach(el => el.style.display = isAdmin ? '' : 'none');
+
+      renderInventory();
+      renderSales();
+      if (isAdmin || isCajero) renderBalance();
+    }
+
+    // --- NAVEGACIÓN ---
+    function switchTab(tabId) {
+      ['inventory', 'sales', 'purchases', 'technical-service', 'crm', 'balance'].forEach(t => {
+        const sec = document.getElementById(`section-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (sec && btn) {
+          if (t === tabId) {
+            sec.classList.remove('hidden');
+            btn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white whitespace-nowrap';
+          } else {
+            sec.classList.add('hidden');
+            btn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap';
+          }
+        }
+      });
+
+      if (tabId === 'inventory') renderInventory();
+      if (tabId === 'sales') { populateSelects(); renderSales(); }
+      if (tabId === 'purchases') renderPurchases();
+      if (tabId === 'technical-service') { populateCustomerDropdowns(); renderRepairs(); }
+      if (tabId === 'crm') renderCRM();
+      if (tabId === 'balance') renderBalance();
+    }
+
+    // --- INVENTARIO Y STOCK CRÍTICO ---
+    function checkLowStockAlerts() {
+      const lowStockProducts = products.filter(p => p.stock <= (p.minStock || 2));
+      const banner = document.getElementById('low-stock-banner');
+      const countEl = document.getElementById('low-stock-count');
+      if (lowStockProducts.length > 0) {
+        banner.classList.remove('hidden');
+        countEl.innerText = lowStockProducts.length;
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function toggleCriticalFilter() {
+      filterOnlyCritical = !filterOnlyCritical;
+      const btn = document.getElementById('btn-toggle-critical');
+      if (filterOnlyCritical) btn.classList.add('bg-amber-600', 'text-white');
+      else btn.classList.remove('bg-amber-600', 'text-white');
+      renderInventory();
+    }
+
+    function filterCriticalStockOnly() {
+      filterOnlyCritical = true;
+      switchTab('inventory');
+      const btn = document.getElementById('btn-toggle-critical');
+      btn.classList.add('bg-amber-600', 'text-white');
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const tbody = document.getElementById('inventory-table-body');
+      const emptyMsg = document.getElementById('inventory-empty');
+      const query = document.getElementById('search-inventory').value.toLowerCase().trim();
+      const isAdmin = currentRole === 'admin';
+
+      tbody.innerHTML = '';
+      let filtered = products.filter(p => 
+        p.brand.toLowerCase().includes(query) ||
+        p.model.toLowerCase().includes(query) ||
+        p.imeiCode.toLowerCase().includes(query)
+      );
+
+      if (filterOnlyCritical) {
+        filtered = filtered.filter(p => p.stock <= (p.minStock || 2));
+      }
+
+      if (filtered.length === 0) {
+        emptyMsg.classList.remove('hidden');
+      } else {
+        emptyMsg.classList.add('hidden');
+        filtered.forEach(p => {
+          const isCritical = p.stock <= (p.minStock || 2);
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition';
+          tr.innerHTML = `
+            <td class="p-3.5">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full border ${p.type === 'Celular' ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'} font-semibold">${p.type}</span>
+                <span class="font-bold text-slate-900">${p.brand} ${p.model}</span>
+              </div>
+            </td>
+            <td class="p-3.5 font-mono text-xs text-slate-500">${p.imeiCode}</td>
+            <td class="p-3.5 text-right font-medium text-slate-600 col-cost ${isAdmin ? '' : 'hidden'}">${formatMoney(p.costPrice)}</td>
+            <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(p.salePrice)}</td>
+            <td class="p-3.5 text-center">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isCritical ? 'bg-rose-100 text-rose-700 border border-rose-300' : 'bg-slate-100 text-slate-700'}">
+                ${p.stock} u. ${isCritical ? `(Mín: ${p.minStock || 2}) ⚠️` : ''}
+              </span>
+            </td>
+            <td class="p-3.5 text-center col-actions ${isAdmin ? '' : 'hidden'}">
+              <div class="flex items-center justify-center gap-1">
+                <button onclick="openEditModal('${p.id}')" class="p-1.5 text-slate-500 hover:text-indigo-600 rounded" title="Editar">✏️</button>
+                <button onclick="deleteProduct('${p.id}')" class="p-1.5 text-slate-500 hover:text-rose-600 rounded" title="Eliminar">🗑️</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+      checkLowStockAlerts();
+    }
+
+    function handleProductSubmit(e) {
+      e.preventDefault();
+      const newProduct = {
+        id: 'p_' + Date.now(),
+        type: document.getElementById('prod-type').value,
+        brand: document.getElementById('prod-brand').value.trim(),
+        model: document.getElementById('prod-model').value.trim(),
+        imeiCode: document.getElementById('prod-code').value.trim(),
+        costPrice: parseFloat(document.getElementById('prod-cost').value) || 0,
+        salePrice: parseFloat(document.getElementById('prod-price').value) || 0,
+        stock: parseInt(document.getElementById('prod-stock').value) || 0,
+        minStock: parseInt(document.getElementById('prod-min-stock').value) || 2
+      };
+      products.push(newProduct);
+      saveAll();
+      renderInventory();
+      populateSelects();
+      e.target.reset();
+      showToast('Producto registrado');
+    }
+
+    function deleteProduct(id) {
+      if (!confirm('¿Deseas dar de baja este producto del catálogo?')) return;
+      products = products.filter(p => p.id !== id);
+      saveAll();
+      renderInventory();
+      populateSelects();
+      showToast('Producto eliminado');
+    }
+
+    function openEditModal(id) {
+      const p = products.find(prod => prod.id === id);
+      if (!p) return;
+      document.getElementById('edit-id').value = p.id;
+      document.getElementById('edit-type').value = p.type;
+      document.getElementById('edit-brand').value = p.brand;
+      document.getElementById('edit-model').value = p.model;
+      document.getElementById('edit-code').value = p.imeiCode;
+      document.getElementById('edit-cost').value = p.costPrice;
+      document.getElementById('edit-price').value = p.salePrice;
+      document.getElementById('edit-stock').value = p.stock;
+      document.getElementById('edit-min-stock').value = p.minStock || 2;
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    function handleEditProductSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-id').value;
+      const index = products.findIndex(p => p.id === id);
+      if (index !== -1) {
+        products[index].type = document.getElementById('edit-type').value;
+        products[index].brand = document.getElementById('edit-brand').value.trim();
+        products[index].model = document.getElementById('edit-model').value.trim();
+        products[index].imeiCode = document.getElementById('edit-code').value.trim();
+        products[index].costPrice = parseFloat(document.getElementById('edit-cost').value) || 0;
+        products[index].salePrice = parseFloat(document.getElementById('edit-price').value) || 0;
+        products[index].stock = parseInt(document.getElementById('edit-stock').value) || 0;
+        products[index].minStock = parseInt(document.getElementById('edit-min-stock').value) || 2;
+        saveAll();
+        renderInventory();
+        populateSelects();
+        closeEditModal();
+        showToast('Producto actualizado');
+      }
+    }
+
+    // --- VENTAS & DESCUENTOS ---
+    function onCustomerSelectForSale() {
+      const custId = document.getElementById('sale-customer-id').value;
+      const cust = customers.find(c => c.id === custId);
+      const badge = document.getElementById('sale-customer-badge');
+      const segmentText = document.getElementById('sale-customer-segment-text');
+      const discountText = document.getElementById('sale-customer-discount-text');
+      const discInput = document.getElementById('sale-discount-pct');
+
+      if (cust) {
+        badge.classList.remove('hidden');
+        segmentText.innerText = `Segmento: ${cust.segment}`;
+        discountText.innerText = `${cust.discount || 0}% Descuento`;
+        discInput.value = cust.discount || 0;
+      } else {
+        badge.classList.add('hidden');
+        discInput.value = 0;
+      }
+      calculateSaleTotalPreview();
+    }
+
+    function onSaleProductChange() {
+      const pId = document.getElementById('sale-product-id').value;
+      const prod = products.find(p => p.id === pId);
+      const imeiGroup = document.getElementById('imei-field-group');
+      const imeiInput = document.getElementById('sale-imei');
+
+      if (prod) {
+        document.getElementById('sale-base-price').value = prod.salePrice;
+        if (prod.type === 'Celular') {
+          imeiGroup.classList.remove('hidden');
+          imeiInput.required = true;
+        } else {
+          imeiGroup.classList.add('hidden');
+          imeiInput.required = false;
+        }
+      }
+      calculateSaleTotalPreview();
+    }
+
+    function calculateSaleTotalPreview() {
+      const pId = document.getElementById('sale-product-id').value;
+      const prod = products.find(p => p.id === pId);
+      const qty = parseInt(document.getElementById('sale-qty').value) || 1;
+      const basePrice = parseFloat(document.getElementById('sale-base-price').value) || 0;
+      const discPct = parseFloat(document.getElementById('sale-discount-pct').value) || 0;
+
+      const unitPriceWithDiscount = basePrice * (1 - (discPct / 100));
+      const total = unitPriceWithDiscount * qty;
+
+      document.getElementById('sale-final-total-display').innerText = formatMoney(total);
+
+      if (prod && currentRole === 'admin') {
+        const unitMargin = unitPriceWithDiscount - prod.costPrice;
+        const totalProfit = unitMargin * qty;
+        const marginPct = unitPriceWithDiscount > 0 ? ((unitMargin / unitPriceWithDiscount) * 100).toFixed(1) : 0;
+        document.getElementById('live-margin-text').innerText = `${formatMoney(totalProfit)} (${marginPct}%)`;
+      }
+    }
+
+    function handleSaleSubmit(e) {
+      e.preventDefault();
+      const pId = document.getElementById('sale-product-id').value;
+      const custId = document.getElementById('sale-customer-id').value;
+      const qty = parseInt(document.getElementById('sale-qty').value) || 1;
+      const basePrice = parseFloat(document.getElementById('sale-base-price').value) || 0;
+      const discountPct = parseFloat(document.getElementById('sale-discount-pct').value) || 0;
+      const paymentMethod = document.getElementById('sale-payment').value;
+      const imei = document.getElementById('sale-imei').value.trim();
+
+      const product = products.find(p => p.id === pId);
+      const customer = customers.find(c => c.id === custId);
+
+      if (!product || !customer) {
+        showToast('Seleccione un producto y cliente válidos', true);
+        return;
+      }
+
+      if (qty > product.stock) {
+        showToast(`Stock insuficiente. Disponibles: ${product.stock}`, true);
+        return;
+      }
+
+      if (product.type === 'Celular' && !imei) {
+        showToast('El IMEI es obligatorio para celulares', true);
+        return;
+      }
+
+      product.stock -= qty;
+
+      const unitPrice = basePrice * (1 - (discountPct / 100));
+      const total = unitPrice * qty;
+      const unitMargin = unitPrice - product.costPrice;
+      const profit = unitMargin * qty;
+      const marginPct = unitPrice > 0 ? Number(((unitMargin / unitPrice) * 100).toFixed(1)) : 0;
+
+      const today = new Date();
+      const warrantyMonths = parseInt(document.getElementById('sale-warranty-months').value) || 6;
+      const expDate = new Date();
+      expDate.setMonth(today.getMonth() + warrantyMonths);
+
+      const saleRecord = {
+        id: 'sal_' + Date.now(),
+        date: today.toISOString().split('T')[0],
+        customerId: customer.id,
+        customerName: customer.name,
+        customerPhone: customer.phone,
+        productId: product.id,
+        productName: `${product.brand} ${product.model}`,
+        isPhone: product.type === 'Celular',
+        imei: product.type === 'Celular' ? imei : 'N/A',
+        condition: product.type === 'Celular' ? document.getElementById('sale-phone-condition').value : 'N/A',
+        warrantyMonths,
+        warrantyExpiration: expDate.toISOString().split('T')[0],
+        quantity: qty,
+        basePrice,
+        discountPct,
+        unitPrice,
+        unitCost: product.costPrice,
+        profit,
+        marginPct,
+        total,
+        paymentMethod
+      };
+
+      sales.unshift(saleRecord);
+      saveAll();
+      renderSales();
+      renderInventory();
+      populateSelects();
+      e.target.reset();
+      document.getElementById('sale-customer-badge').classList.add('hidden');
+      document.getElementById('imei-field-group').classList.add('hidden');
+      document.getElementById('sale-final-total-display').innerText = '$ 0.00';
+
+      openSaleSuccessModal(saleRecord);
+    }
+
+    function renderSales() {
+      const tbody = document.getElementById('sales-table-body');
+      const emptyMsg = document.getElementById('sales-empty');
+      const isAdmin = currentRole === 'admin';
+      tbody.innerHTML = '';
+
+      if (sales.length === 0) {
+        emptyMsg.classList.remove('hidden');
+      } else {
+        emptyMsg.classList.add('hidden');
+        sales.forEach(s => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition';
+          tr.innerHTML = `
+            <td class="p-3.5">
+              <span class="text-xs text-slate-400 block">${s.date}</span>
+              <strong class="text-slate-900">${s.customerName}</strong>
+            </td>
+            <td class="p-3.5">
+              <div class="font-medium text-slate-800">${s.productName}</div>
+              ${s.isPhone ? `<span class="inline-block mt-0.5 font-mono text-[11px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border">IMEI: ${s.imei}</span>` : ''}
+              ${s.discountPct > 0 ? `<span class="inline-block ml-1 text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold">${s.discountPct}% OFF</span>` : ''}
+            </td>
+            <td class="p-3.5 text-center font-bold text-slate-700">${s.quantity}</td>
+            <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(s.total)}</td>
+            <td class="p-3.5 text-right role-perm-margins ${isAdmin ? '' : 'hidden'}">
+              <span class="font-bold text-emerald-600">${formatMoney(s.profit)}</span>
+              <span class="text-[11px] text-slate-400 block">(${s.marginPct}%)</span>
+            </td>
+            <td class="p-3.5 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="sendSaleWhatsApp('${s.id}')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition" title="Enviar Comprobante por WhatsApp">
+                  📲
+                </button>
+                <button onclick="downloadSalePDF('${s.id}')" class="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition" title="Descargar Factura PDF">
+                  📄
+                </button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    // --- WHATSAPP Y PDF ---
+    function openSaleSuccessModal(sale) {
+      const modal = document.getElementById('sale-success-modal');
+      const btnWa = document.getElementById('btn-success-whatsapp');
+      const btnPdf = document.getElementById('btn-success-pdf');
+
+      btnWa.onclick = () => sendSaleWhatsApp(sale.id);
+      btnPdf.onclick = () => downloadSalePDF(sale.id);
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeSaleSuccessModal() {
+      document.getElementById('sale-success-modal').classList.add('hidden');
+    }
+
+    function sendSaleWhatsApp(saleId) {
+      const sale = sales.find(s => s.id === saleId);
+      if (!sale) return;
+
+      const phone = cleanPhone(sale.customerPhone);
+      const bizName = businessProfile.name || 'TechStock Pro';
+
+      let msg = `🧾 *COMPROBANTE DE COMPRA - ${bizName}*\n\n`;
+      msg += `¡Hola *${sale.customerName}*! Gracias por tu compra.\n\n`;
+      msg += `📅 *Fecha:* ${sale.date}\n`;
+      msg += `📦 *Producto:* ${sale.productName} (x${sale.quantity})\n`;
+
+      if (sale.isPhone && sale.imei !== 'N/A') {
+        msg += `🔢 *IMEI:* ${sale.imei}\n`;
+        msg += `🛡️ *Garantía:* ${sale.warrantyMonths} meses (Hasta ${sale.warrantyExpiration})\n`;
+      }
+
+      if (sale.discountPct > 0) {
+        msg += `🏷️ *Descuento Aplicado:* ${sale.discountPct}%\n`;
+      }
+
+      msg += `💳 *Medio de Pago:* ${sale.paymentMethod}\n`;
+      msg += `💰 *TOTAL PAGADO:* ${formatMoney(sale.total)}\n\n`;
+      msg += `_Conserva este mensaje y el IMEI del equipo para la cobertura de tu garantía._\n`;
+      msg += `¡Estamos a tu disposición! 🚀`;
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+      showToast('Abriendo WhatsApp...');
+    }
+
+    function downloadSalePDF(saleId) {
+      const sale = sales.find(s => s.id === saleId);
+      if (!sale) return;
+
+      document.getElementById('pdf-biz-name').innerText = businessProfile.name || 'TechStock Pro';
+      document.getElementById('pdf-biz-slogan').innerText = businessProfile.slogan || 'Venta & Garantías';
+      
+      const logoImg = document.getElementById('pdf-logo-img');
+      const logoText = document.getElementById('pdf-logo-text');
+      if (businessProfile.logo) {
+        logoImg.src = businessProfile.logo;
+        logoImg.classList.remove('hidden');
+        logoText.classList.add('hidden');
+      } else {
+        logoImg.classList.add('hidden');
+        logoText.classList.remove('hidden');
+      }
+
+      document.getElementById('pdf-voucher-id').innerText = `#VTA-${sale.id.slice(-6)}`;
+      document.getElementById('pdf-voucher-date').innerText = `Fecha: ${sale.date}`;
+      document.getElementById('pdf-cust-name').innerText = sale.customerName;
+      document.getElementById('pdf-payment-method').innerText = sale.paymentMethod;
+
+      const imeiBox = document.getElementById('pdf-imei-container');
+      if (sale.isPhone && sale.imei !== 'N/A') {
+        imeiBox.classList.remove('hidden');
+        document.getElementById('pdf-device-imei').innerText = sale.imei;
+        document.getElementById('pdf-device-warranty').innerText = `${sale.warrantyMonths} meses (Vence: ${sale.warrantyExpiration})`;
+      } else {
+        imeiBox.classList.add('hidden');
+      }
+
+      document.getElementById('pdf-item-name').innerText = sale.productName;
+      document.getElementById('pdf-item-qty').innerText = sale.quantity;
+      document.getElementById('pdf-item-price').innerText = formatMoney(sale.basePrice);
+      document.getElementById('pdf-item-disc').innerText = `${sale.discountPct || 0}%`;
+      document.getElementById('pdf-item-total').innerText = formatMoney(sale.total);
+      document.getElementById('pdf-total-amount').innerText = formatMoney(sale.total);
+
+      const template = document.getElementById('pdf-printable-template');
+      template.classList.remove('hidden');
+
+      const opt = {
+        margin: 10,
+        filename: `Comprobante_${sale.customerName.replace(/\s+/g, '_')}_${sale.date}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(template).save().then(() => {
+        template.classList.add('hidden');
+        showToast('Factura PDF descargada con éxito');
+      });
+    }
+
+    // --- TALLER Y GARANTÍAS ---
+    function checkWarrantyFromRepairForm() {
+      const imei = document.getElementById('repair-imei').value.trim();
+      const statusBox = document.getElementById('repair-warranty-status');
+      const isWarrantySelect = document.getElementById('repair-is-warranty');
+      const costInput = document.getElementById('repair-cost');
+
+      if (!imei) {
+        showToast('Ingrese un IMEI para verificar la garantía', true);
+        return;
+      }
+
+      const match = sales.find(s => s.isPhone && s.imei === imei);
+      statusBox.classList.remove('hidden');
+
+      if (!match) {
+        statusBox.className = 'text-xs p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800';
+        statusBox.innerHTML = `⚠️ <strong>Sin registro previo:</strong> El equipo no figura vendido aquí. Cobro particular.`;
+        isWarrantySelect.value = 'false';
+      } else {
+        const today = new Date();
+        const expDate = new Date(match.warrantyExpiration);
+        const isValid = today <= expDate;
+
+        if (isValid) {
+          statusBox.className = 'text-xs p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800';
+          statusBox.innerHTML = `✓ <strong>Garantía Vigente:</strong> Vendido el ${match.date} a ${match.customerName}. Vence el ${match.warrantyExpiration}.`;
+          isWarrantySelect.value = 'true';
+          costInput.value = '0.00';
+        } else {
+          statusBox.className = 'text-xs p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800';
+          statusBox.innerHTML = `✕ <strong>Garantía Caducada:</strong> La cobertura finalizó el ${match.warrantyExpiration}.`;
+          isWarrantySelect.value = 'false';
+        }
+      }
+    }
+
+    function onWarrantyToggleChange() {
+      const isWarranty = document.getElementById('repair-is-warranty').value === 'true';
+      if (isWarranty) document.getElementById('repair-cost').value = '0.00';
+    }
+
+    function handleRepairSubmit(e) {
+      e.preventDefault();
+      const custId = document.getElementById('repair-customer-id').value;
+      const customer = customers.find(c => c.id === custId);
+      const isWarranty = document.getElementById('repair-is-warranty').value === 'true';
+
+      const ticketNo = 'ST-' + (1000 + repairs.length + 1);
+      const newRepair = {
+        id: 'rep_' + Date.now(),
+        ticket: ticketNo,
+        date: new Date().toISOString().split('T')[0],
+        customerId: customer.id,
+        customerName: customer.name,
+        customerPhone: customer.phone,
+        device: document.getElementById('repair-device').value.trim(),
+        imei: document.getElementById('repair-imei').value.trim() || 'N/A',
+        fault: document.getElementById('repair-fault').value.trim(),
+        cost: parseFloat(document.getElementById('repair-cost').value) || 0,
+        isWarranty,
+        status: 'Pendiente'
+      };
+
+      repairs.unshift(newRepair);
+      saveAll();
+      renderRepairs();
+      e.target.reset();
+      document.getElementById('repair-warranty-status').classList.add('hidden');
+      showToast(`Orden ${ticketNo} generada`);
+    }
+
+    function updateRepairStatus(repairId, newStatus) {
+      const rep = repairs.find(r => r.id === repairId);
+      if (rep) {
+        rep.status = newStatus;
+        saveAll();
+        renderRepairs();
+        showToast(`Orden ${rep.ticket} actualizada a: ${newStatus}`);
+      }
+    }
+
+    function sendRepairWhatsApp(repairId) {
+      const r = repairs.find(item => item.id === repairId);
+      if (!r) return;
+
+      const phone = cleanPhone(r.customerPhone);
+      const bizName = businessProfile.name || 'TechStock Pro';
+
+      let msg = `🔧 *AVISO DE SERVICIO TÉCNICO - ${bizName}*\n\n`;
+      msg += `Hola *${r.customerName}*, te informamos el estado de tu equipo en nuestro taller:\n\n`;
+      msg += `📋 *Ticket:* ${r.ticket}\n`;
+      msg += `📱 *Equipo:* ${r.device}\n`;
+      msg += `🔍 *Falla Declarada:* ${r.fault}\n`;
+      msg += `📌 *ESTADO ACTUAL:* *${r.status.toUpperCase()}*\n`;
+
+      if (r.status === 'Reparado') {
+        msg += `\n✅ *¡Tu equipo ya está reparado y listo para retirar!*\n`;
+        msg += `💰 *Total a abonar:* ${r.isWarranty ? '$0.00 (Cubierto por Garantía)' : formatMoney(r.cost)}\n`;
+      } else if (r.status === 'En reparación') {
+        msg += `\n⚙️ Nuestro equipo técnico está trabajando en la reparación de tu dispositivo.\n`;
+      } else if (r.status === 'Entregado') {
+        msg += `\n📦 El equipo ha sido entregado. ¡Gracias por confiar en nuestro servicio técnico!\n`;
+      }
+
+      msg += `\nPuedes responder a este mensaje ante cualquier duda. 📲`;
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+      showToast('Abriendo WhatsApp del cliente...');
+    }
+
+    function renderRepairs() {
+      const tbody = document.getElementById('repairs-table-body');
+      const emptyMsg = document.getElementById('repairs-empty');
+      const filterStatus = document.getElementById('filter-repair-status').value;
+
+      let filtered = repairs;
+      if (filterStatus !== 'todos') {
+        filtered = filtered.filter(r => r.status === filterStatus);
+      }
+
+      document.getElementById('stat-repairs-pending').innerText = repairs.filter(r => r.status === 'Pendiente').length;
+      document.getElementById('stat-repairs-progress').innerText = repairs.filter(r => r.status === 'En reparación').length;
+      document.getElementById('stat-repairs-done').innerText = repairs.filter(r => r.status === 'Reparado').length;
+      document.getElementById('stat-repairs-delivered').innerText = repairs.filter(r => r.status === 'Entregado').length;
+
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        emptyMsg.classList.remove('hidden');
+      } else {
+        emptyMsg.classList.add('hidden');
+        filtered.forEach(r => {
+          let badgeColor = 'bg-amber-100 text-amber-800';
+          if (r.status === 'En reparación') badgeColor = 'bg-blue-100 text-blue-800';
+          if (r.status === 'Reparado') badgeColor = 'bg-emerald-100 text-emerald-800';
+          if (r.status === 'Entregado') badgeColor = 'bg-slate-200 text-slate-700';
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition';
+          tr.innerHTML = `
+            <td class="p-3.5">
+              <span class="font-bold text-indigo-700 block">${r.ticket}</span>
+              <span class="text-xs text-slate-400">${r.date}</span>
+            </td>
+            <td class="p-3.5">
+              <strong class="text-slate-900 block">${r.customerName}</strong>
+              <span class="text-xs text-slate-500">${r.device} ${r.imei !== 'N/A' ? `(${r.imei})` : ''}</span>
+            </td>
+            <td class="p-3.5 text-xs">
+              <p class="text-slate-700 max-w-xs truncate">${r.fault}</p>
+              ${r.isWarranty ? '<span class="inline-block text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded mt-0.5">En Garantía</span>' : '<span class="text-[10px] text-slate-400">Presupuesto Particular</span>'}
+            </td>
+            <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(r.cost)}</td>
+            <td class="p-3.5 text-center">
+              <select onchange="updateRepairStatus('${r.id}', this.value)" class="text-xs font-bold ${badgeColor} border rounded-lg px-2 py-1 focus:outline-none">
+                <option value="Pendiente" ${r.status === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                <option value="En reparación" ${r.status === 'En reparación' ? 'selected' : ''}>En reparación</option>
+                <option value="Reparado" ${r.status === 'Reparado' ? 'selected' : ''}>Reparado</option>
+                <option value="Entregado" ${r.status === 'Entregado' ? 'selected' : ''}>Entregado</option>
+              </select>
+            </td>
+            <td class="p-3.5 text-center">
+              <button onclick="sendRepairWhatsApp('${r.id}')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition" title="Avisar por WhatsApp">
+                <span>📲 Avisar</span>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    // --- CRM & MARKETING ---
+    function renderCRM() {
+      const tbody = document.getElementById('crm-table-body');
+      const query = document.getElementById('search-crm').value.toLowerCase().trim();
+      const segmentFilter = document.getElementById('filter-crm-segment').value;
+
+      tbody.innerHTML = '';
+      let filtered = customers.filter(c => 
+        c.name.toLowerCase().includes(query) ||
+        c.phone.toLowerCase().includes(query) ||
+        (c.dni && c.dni.includes(query))
+      );
+
+      if (segmentFilter !== 'todos') {
+        filtered = filtered.filter(c => c.segment === segmentFilter);
+      }
+
+      filtered.forEach(c => {
+        const customerSales = sales.filter(s => s.customerId === c.id);
+        const totalSpent = customerSales.reduce((acc, curr) => acc + curr.total, 0);
+
+        let segmentBadge = 'bg-slate-100 text-slate-700 border-slate-200';
+        if (c.segment === 'Mayorista') segmentBadge = 'bg-purple-100 text-purple-800 border-purple-300';
+        if (c.segment === 'Frecuente') segmentBadge = 'bg-sky-100 text-sky-800 border-sky-300';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="p-3.5">
+            <strong class="text-slate-900 block">${c.name}</strong>
+            <span class="text-xs text-slate-400">${c.dni || 'Sin DNI/CUIT'}</span>
+          </td>
+          <td class="p-3.5 text-xs text-slate-600">
+            <span>📞 +${cleanPhone(c.phone)}</span>
+          </td>
+          <td class="p-3.5 text-center">
+            <span class="text-xs px-2.5 py-1 rounded-full font-bold border ${segmentBadge}">${c.segment}</span>
+          </td>
+          <td class="p-3.5 text-center font-bold text-indigo-600">${c.discount || 0}%</td>
+          <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(totalSpent)}</td>
+          <td class="p-3.5 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openPromoModal('${c.id}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg font-semibold transition flex items-center gap-1" title="Enviar WhatsApp">
+                <span>📲 Promo</span>
+              </button>
+              <button onclick="viewCustomerHistory('${c.id}')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border px-2 py-1 rounded-lg font-semibold transition" title="Ver compras">
+                Historial 🛍️
+              </button>
+              <button onclick="editCustomer('${c.id}')" class="text-xs p-1 text-slate-500 hover:text-indigo-600">✏️</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openPromoModal(custId) {
+      const c = customers.find(item => item.id === custId);
+      if (!c) return;
+
+      document.getElementById('promo-client-name').value = `${c.name} (${c.segment})`;
+      document.getElementById('promo-client-phone').value = c.phone;
+      document.getElementById('promo-template-select').value = 'promo_accesorios';
+      applyPromoTemplate();
+
+      document.getElementById('promo-whatsapp-modal').classList.remove('hidden');
+    }
+
+    function closePromoModal() {
+      document.getElementById('promo-whatsapp-modal').classList.add('hidden');
+    }
+
+    function applyPromoTemplate() {
+      const val = document.getElementById('promo-template-select').value;
+      const clientName = document.getElementById('promo-client-name').value.split(' (')[0];
+      const bizName = businessProfile.name || 'TechStock Pro';
+      const textArea = document.getElementById('promo-custom-text');
+
+      if (val === 'promo_accesorios') {
+        textArea.value = `¡Hola ${clientName}! 📱 En *${bizName}* tenemos una promoción exclusiva para vos:\n\n🔥 *20% de descuento* en fundas, vidrios templados y cargadores rápidos durante esta semana.\n\n¡Te esperamos en nuestro local o respondé a este chat para reservarlo! 🚀`;
+      } else if (val === 'ingreso_equipos') {
+        textArea.value = `¡Hola ${clientName}! 📢 Te escribimos desde *${bizName}* para avisarte que acaban de ingresar nuevos modelos de celulares liberados con garantía oficial.\n\nEscribinos y te enviamos la lista de precios actualizada. ¡Precios especiales de contado y cuotas! 💳✨`;
+      } else if (val === 'saludo_frecuente') {
+        textArea.value = `¡Hola ${clientName}! 🌟 Como sos uno de nuestros clientes más importantes en *${bizName}*, queremos agradecerte y dejarte un descuento especial para tu próxima compra o reparación técnica.\n\n¡Esperamos verte pronto!`;
+      } else {
+        textArea.value = `¡Hola ${clientName}! Te escribimos desde *${bizName}*...`;
+      }
+    }
+
+    function sendPromoWhatsApp() {
+      const phone = cleanPhone(document.getElementById('promo-client-phone').value);
+      const text = document.getElementById('promo-custom-text').value;
+
+      if (!text.trim()) {
+        showToast('Escriba un mensaje para enviar', true);
+        return;
+      }
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+      closePromoModal();
+      showToast('Abriendo WhatsApp...');
+    }
+
+    function openCustomerModal() {
+      document.getElementById('customer-form').reset();
+      document.getElementById('cust-id').value = '';
+      document.getElementById('customer-modal').classList.remove('hidden');
+    }
+
+    function closeCustomerModal() {
+      document.getElementById('customer-modal').classList.add('hidden');
+    }
+
+    function autoSuggestSegmentDiscount() {
+      const seg = document.getElementById('cust-segment').value;
+      const disc = document.getElementById('cust-discount');
+      if (seg === 'Mayorista') disc.value = 12;
+      else if (seg === 'Frecuente') disc.value = 5;
+      else disc.value = 0;
+    }
+
+    function handleCustomerSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('cust-id').value;
+      const customerData = {
+        name: document.getElementById('cust-name').value.trim(),
+        phone: cleanPhone(document.getElementById('cust-phone').value),
+        dni: document.getElementById('cust-dni').value.trim(),
+        segment: document.getElementById('cust-segment').value,
+        discount: parseFloat(document.getElementById('cust-discount').value) || 0,
+        notes: document.getElementById('cust-notes').value.trim()
+      };
+
+      if (id) {
+        const index = customers.findIndex(c => c.id === id);
+        if (index !== -1) customers[index] = { ...customers[index], ...customerData };
+        showToast('Cliente actualizado');
+      } else {
+        customerData.id = 'c_' + Date.now();
+        customers.push(customerData);
+        showToast('Cliente registrado');
+      }
+
+      saveAll();
+      closeCustomerModal();
+      renderCRM();
+      populateCustomerDropdowns();
+    }
+
+    function editCustomer(id) {
+      const c = customers.find(item => item.id === id);
+      if (!c) return;
+      document.getElementById('cust-id').value = c.id;
+      document.getElementById('cust-name').value = c.name;
+      document.getElementById('cust-phone').value = c.phone;
+      document.getElementById('cust-dni').value = c.dni || '';
+      document.getElementById('cust-segment').value = c.segment;
+      document.getElementById('cust-discount').value = c.discount || 0;
+      document.getElementById('cust-notes').value = c.notes || '';
+      document.getElementById('customer-modal').classList.remove('hidden');
+    }
+
+    function viewCustomerHistory(custId) {
+      const cust = customers.find(c => c.id === custId);
+      if (!cust) return;
+
+      document.getElementById('history-modal-cust-name').innerText = cust.name;
+      document.getElementById('history-modal-cust-segment').innerText = `Segmento: ${cust.segment} | Tel: ${cust.phone}`;
+
+      const historyTbody = document.getElementById('customer-history-tbody');
+      const emptyMsg = document.getElementById('customer-history-empty');
+      historyTbody.innerHTML = '';
+
+      const custSales = sales.filter(s => s.customerId === cust.id);
+      let total = 0;
+
+      if (custSales.length === 0) {
+        emptyMsg.classList.remove('hidden');
+      } else {
+        emptyMsg.classList.add('hidden');
+        custSales.forEach(s => {
+          total += s.total;
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50';
+          tr.innerHTML = `
+            <td class="p-2.5 text-slate-500">${s.date}</td>
+            <td class="p-2.5 font-bold text-slate-800">${s.productName} (x${s.quantity})</td>
+            <td class="p-2.5 font-mono text-[11px] text-slate-600">${s.imei || '-'}</td>
+            <td class="p-2.5 text-center">
+              ${s.warrantyExpiration ? `<span class="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-mono text-[10px]">${s.warrantyExpiration}</span>` : '-'}
+            </td>
+            <td class="p-2.5 text-right font-bold text-slate-900">${formatMoney(s.total)}</td>
+          `;
+          historyTbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById('history-modal-total').innerText = formatMoney(total);
+      document.getElementById('customer-history-modal').classList.remove('hidden');
+    }
+
+    function closeCustomerHistoryModal() {
+      document.getElementById('customer-history-modal').classList.add('hidden');
+    }
+
+    // --- COMPRAS, BALANCE & CSV ---
+    function autoFillPurchaseCost() {
+      const pId = document.getElementById('pur-product-id').value;
+      const prod = products.find(p => p.id === pId);
+      if (prod) document.getElementById('pur-cost').value = prod.costPrice;
+    }
+
+    function handlePurchaseSubmit(e) {
+      e.preventDefault();
+      const pId = document.getElementById('pur-product-id').value;
+      const qty = parseInt(document.getElementById('pur-qty').value) || 0;
+      const cost = parseFloat(document.getElementById('pur-cost').value) || 0;
+      const supplier = document.getElementById('pur-supplier').value.trim();
+      const date = document.getElementById('pur-date').value;
+
+      const product = products.find(p => p.id === pId);
+      if (!product) return;
+
+      product.stock += qty;
+      product.costPrice = cost;
+
+      purchases.unshift({
+        id: 'pur_' + Date.now(),
+        date: date || new Date().toISOString().split('T')[0],
+        supplier,
+        productId: product.id,
+        productName: `${product.brand} ${product.model}`,
+        quantity: qty,
+        unitCost: cost,
+        total: qty * cost
+      });
+
+      saveAll();
+      renderPurchases();
+      renderInventory();
+      populateSelects();
+      e.target.reset();
+      showToast('Compra registrada');
+    }
+
+    function renderPurchases() {
+      const tbody = document.getElementById('purchases-table-body');
+      tbody.innerHTML = '';
+      purchases.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-3.5 text-xs text-slate-500">${p.date}</td>
+          <td class="p-3.5 font-bold text-slate-900">${p.supplier}</td>
+          <td class="p-3.5">${p.productName}</td>
+          <td class="p-3.5 text-center">${p.quantity}</td>
+          <td class="p-3.5 text-right text-slate-600">${formatMoney(p.unitCost)}</td>
+          <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(p.total)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderBalance() {
+      const totalSales = sales.reduce((acc, curr) => acc + curr.total, 0);
+      const totalPurchases = purchases.reduce((acc, curr) => acc + curr.total, 0);
+      const totalProfit = sales.reduce((acc, curr) => acc + curr.profit, 0);
+      const avgMarginPct = totalSales > 0 ? ((totalProfit / totalSales) * 100).toFixed(1) : 0;
+
+      document.getElementById('stat-total-sales').innerText = formatMoney(totalSales);
+      document.getElementById('stat-total-purchases').innerText = formatMoney(totalPurchases);
+      document.getElementById('stat-net-profit').innerText = formatMoney(totalProfit);
+      document.getElementById('stat-avg-margin').innerText = `${avgMarginPct}%`;
+
+      const tbody = document.getElementById('transactions-table-body');
+      tbody.innerHTML = '';
+      const transactions = [];
+
+      purchases.forEach(p => transactions.push({ date: p.date, type: 'Compra', desc: `${p.productName} (${p.supplier})`, qty: p.quantity, amount: p.total, isIncome: false }));
+      sales.forEach(s => transactions.push({ date: s.date, type: 'Venta', desc: `${s.productName} - Cliente: ${s.customerName}`, qty: s.quantity, amount: s.total, isIncome: true }));
+
+      transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      transactions.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="p-3.5 text-xs text-slate-500">${t.date}</td>
+          <td class="p-3.5"><span class="text-xs px-2 py-0.5 rounded-full font-bold ${t.isIncome ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${t.type}</span></td>
+          <td class="p-3.5 font-medium text-slate-800">${t.desc}</td>
+          <td class="p-3.5 text-center text-slate-600">${t.qty} u.</td>
+          <td class="p-3.5 text-right font-bold ${t.isIncome ? 'text-emerald-600' : 'text-rose-600'}">${t.isIncome ? '+' : '-'} ${formatMoney(t.amount)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportData(type) {
+      let filename = `Reporte_${type}_${new Date().toISOString().split('T')[0]}.csv`;
+      let headers = [];
+      let rows = [];
+
+      if (type === 'inventory') {
+        headers = ['Tipo', 'Marca', 'Modelo', 'Codigo_Ref', 'Costo_Unitario', 'Precio_Venta', 'Stock_Actual', 'Stock_Minimo'];
+        rows = products.map(p => [p.type, p.brand, p.model, p.imeiCode, p.costPrice, p.salePrice, p.stock, p.minStock || 2]);
+      } else if (type === 'sales') {
+        headers = ['Fecha', 'Cliente', 'Telefono', 'Producto', 'IMEI', 'Garantia_Hasta', 'Cantidad', 'Precio_Unitario', 'Descuento_%', 'Total_Venta', 'Medio_Pago', 'Ganancia_Neta'];
+        rows = sales.map(s => [s.date, s.customerName, s.customerPhone, s.productName, s.imei, s.warrantyExpiration || 'N/A', s.quantity, s.unitPrice, s.discountPct, s.total, s.paymentMethod, s.profit]);
+      } else if (type === 'purchases') {
+        headers = ['Fecha', 'Proveedor', 'Producto', 'Cantidad', 'Costo_Unitario', 'Total_Invertido'];
+        rows = purchases.map(p => [p.date, p.supplier, p.productName, p.quantity, p.unitCost, p.total]);
+      } else if (type === 'customers') {
+        headers = ['Nombre', 'Telefono', 'DNI_CUIT', 'Segmento', 'Descuento_%', 'Notas'];
+        rows = customers.map(c => [c.name, c.phone, c.dni || '', c.segment, c.discount || 0, c.notes || '']);
+      } else if (type === 'repairs') {
+        headers = ['Ticket', 'Fecha_Ingreso', 'Cliente', 'Telefono', 'Equipo', 'IMEI', 'Falla', 'Costo', 'Garantia', 'Estado'];
+        rows = repairs.map(r => [r.ticket, r.date, r.customerName, r.customerPhone, r.device, r.imei, r.fault, r.cost, r.isWarranty ? 'SI' : 'NO', r.status]);
+      }
+
+      downloadCSV(filename, [headers, ...rows]);
+      showToast(`Archivo ${filename} generado`);
+    }
+
+    function downloadCSV(filename, rows) {
+      const processRow = row => row.map(val => {
+        let text = (val === null || val === undefined) ? '' : val.toString();
+        text = text.replace(/"/g, '""');
+        if (text.search(/("|,|;|\n)/g) >= 0) text = `"${text}"`;
+        return text;
+      }).join(';');
+
+      const csvContent = '\uFEFF' + rows.map(processRow).join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // --- POBLADO DE SELECTORES ---
+    function populateSelects() {
+      const purSelect = document.getElementById('pur-product-id');
+      const saleSelect = document.getElementById('sale-product-id');
+      purSelect.innerHTML = '<option value="">-- Seleccionar producto --</option>';
+      saleSelect.innerHTML = '<option value="">-- Seleccionar producto --</option>';
+
+      products.forEach(p => {
+        const optP = document.createElement('option');
+        optP.value = p.id;
+        optP.textContent = `${p.brand} ${p.model} (${p.type}) [Stock: ${p.stock}]`;
+        purSelect.appendChild(optP);
+
+        const optS = document.createElement('option');
+        optS.value = p.id;
+        optS.textContent = `${p.brand} ${p.model} - $${p.salePrice} (Disp: ${p.stock})`;
+        optS.disabled = p.stock <= 0;
+        saleSelect.appendChild(optS);
+      });
+
+      populateCustomerDropdowns();
+    }
+
+    function populateCustomerDropdowns() {
+      const saleCust = document.getElementById('sale-customer-id');
+      const repairCust = document.getElementById('repair-customer-id');
+
+      saleCust.innerHTML = '<option value="">-- Seleccionar Cliente CRM --</option>';
+      repairCust.innerHTML = '<option value="">-- Seleccionar Cliente --</option>';
+
+      customers.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.segment}${c.discount > 0 ? ` - ${c.discount}% Desc.` : ''})`;
+        saleCust.appendChild(opt);
+
+        const optRep = document.createElement('option');
+        optRep.value = c.id;
+        optRep.textContent = `${c.name} - 📞 ${c.phone}`;
+        repairCust.appendChild(optRep);
+      });
+    }
+
+    // --- PERFIL DE NEGOCIO ---
+    function renderBusinessProfile() {
+      document.getElementById('business-name-display').innerText = businessProfile.name;
+      document.getElementById('business-slogan-display').innerText = businessProfile.slogan;
+      const logoImg = document.getElementById('custom-logo-img');
+      const defaultIcon = document.getElementById('default-logo-icon');
+
+      if (businessProfile.logo) {
+        logoImg.src = businessProfile.logo;
+        logoImg.classList.remove('hidden');
+        defaultIcon.classList.add('hidden');
+      } else {
+        logoImg.classList.add('hidden');
+        defaultIcon.classList.remove('hidden');
+      }
+    }
+
+    function openBusinessModal() {
+      document.getElementById('input-biz-name').value = businessProfile.name;
+      document.getElementById('input-biz-slogan').value = businessProfile.slogan;
+      document.getElementById('business-modal').classList.remove('hidden');
+    }
+
+    function closeBusinessModal() {
+      document.getElementById('business-modal').classList.add('hidden');
+    }
+
+    function saveBusinessProfile(e) {
+      e.preventDefault();
+      businessProfile.name = document.getElementById('input-biz-name').value.trim();
+      businessProfile.slogan = document.getElementById('input-biz-slogan').value.trim();
+      const file = document.getElementById('input-biz-logo').files[0];
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          businessProfile.logo = evt.target.result;
+          localStorage.setItem(STORAGE_KEY_BIZ, JSON.stringify(businessProfile));
+          renderBusinessProfile();
+          closeBusinessModal();
+          showToast('Perfil actualizado');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        localStorage.setItem(STORAGE_KEY_BIZ, JSON.stringify(businessProfile));
+        renderBusinessProfile();
+        closeBusinessModal();
+        showToast('Perfil actualizado');
+      }
+    }
+
+    // --- INICIALIZACIÓN DE LA APP ---
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('pur-date').value = new Date().toISOString().split('T')[0];
+      renderBusinessProfile();
+      applyRolePermissions();
+      populateSelects();
+      checkLowStockAlerts();
+    });
+  </script>
+</body>
+</html>
+
+
