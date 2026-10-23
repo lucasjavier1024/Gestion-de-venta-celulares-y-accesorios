@@ -25,7 +25,7 @@
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
   <!-- NOTIFICACIÓN FLOTANTE (TOAST) -->
-  <div id="toast" class="fixed top-5 right-5 z-50 transform transition-all duration-300 translate-y-[-150%] opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+  <div id="toast" class="fixed top-5 right-5 z-[100] transform transition-all duration-300 translate-y-[-150%] opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
     <span id="toast-icon" class="font-bold">✓</span>
     <span id="toast-message" class="text-sm font-medium">Operación exitosa</span>
   </div>
@@ -34,7 +34,7 @@
   <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 gap-3">
-        
+
         <!-- Logo y Nombre Comercial -->
         <div class="flex items-center gap-3 min-w-0">
           <div id="business-logo-container" class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-inner">
@@ -107,7 +107,7 @@
     <!-- SECCIÓN 1: INVENTARIO / CATÁLOGO -->
     <section id="section-inventory" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         <!-- Formulario (Solo Administrador) -->
         <div id="product-form-container" class="role-perm-inventory-form bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
           <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -204,7 +204,7 @@
     <!-- SECCIÓN 2: PUNTO DE VENTA Y FACTURACIÓN -->
     <section id="section-sales" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         <!-- Formulario Venta -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
           <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -212,7 +212,7 @@
             Punto de Venta
           </h2>
           <form id="sale-form" onsubmit="handleSaleSubmit(event)" class="space-y-3.5">
-            
+
             <!-- Selección de Cliente CRM -->
             <div>
               <div class="flex justify-between items-center mb-1">
@@ -239,7 +239,7 @@
                 <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded font-mono">Trazabilidad</span>
               </div>
               <input type="text" id="sale-imei" maxlength="18" placeholder="Ingrese IMEI físico del equipo" class="w-full bg-white border border-indigo-300 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              
+
               <div class="grid grid-cols-2 gap-2 pt-1">
                 <div>
                   <label class="block text-[11px] font-semibold text-slate-600 mb-1">Meses Garantía</label>
@@ -379,6 +379,7 @@
                   <th class="p-3.5 text-center">Cant.</th>
                   <th class="p-3.5 text-right">Costo U.</th>
                   <th class="p-3.5 text-right">Total</th>
+                  <th class="p-3.5 text-center col-actions">Acciones</th>
                 </tr>
               </thead>
               <tbody id="purchases-table-body" class="divide-y divide-slate-100"></tbody>
@@ -390,7 +391,7 @@
 
     <!-- SECCIÓN 4: SERVICIO TÉCNICO & TALLER -->
     <section id="section-technical-service" class="hidden space-y-6">
-      
+
       <!-- Contadores de Taller -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -412,7 +413,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         <!-- Formulario Orden de Reparación -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
           <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -550,7 +551,7 @@
 
     <!-- SECCIÓN 6: REPORTES, BALANCE Y EXPORTACIONES -->
     <section id="section-balance" class="hidden space-y-6">
-      
+
       <!-- CENTRO DE EXPORTACIÓN A EXCEL/CSV -->
       <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
@@ -628,7 +629,7 @@
 
   <!-- MODAL: VENTA EXITOSA (WHATSAPP Y PDF) -->
   <div id="sale-success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-center">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-center max-h-[90vh] overflow-y-auto">
       <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
         ✓
       </div>
@@ -656,7 +657,7 @@
 
   <!-- MODAL: MENSAJES Y PROMOS WHATSAPP -->
   <div id="promo-whatsapp-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <span>📲</span> WhatsApp Marketing & Avisos
@@ -690,7 +691,8 @@
   </div>
 
   <!-- PLANTILLA OCULTA PARA FACTURAS EN PDF -->
-  <div id="pdf-printable-template" class="hidden bg-white p-8 max-w-2xl mx-auto text-slate-900 border border-slate-200">
+  <div id="pdf-printable-template-container" class="fixed -left-[9999px] -top-[9999px] w-[800px] pointer-events-none">
+    <div id="pdf-printable-template" class="bg-white p-8 w-full text-slate-900 border border-slate-200">
     <div class="flex justify-between items-start border-b pb-4 mb-4">
       <div class="flex items-center gap-3">
         <div id="pdf-logo-box" class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
@@ -754,10 +756,11 @@
       <p class="text-center pt-2">¡Gracias por su compra! Conserve este comprobante para gestionar su garantía.</p>
     </div>
   </div>
+  </div>
 
   <!-- MODAL: REGISTRAR / EDITAR CLIENTE (CRM) -->
   <div id="customer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="text-base font-bold text-slate-900">Registrar / Editar Cliente</h3>
         <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
@@ -832,7 +835,7 @@
           Este cliente aún no registra compras en el local.
         </div>
       </div>
-      
+
       <div class="border-t pt-3 flex justify-between items-center text-xs font-bold text-slate-800">
         <span>Total Acumulado:</span>
         <span id="history-modal-total" class="text-sm text-emerald-600">$0.00</span>
@@ -842,7 +845,7 @@
 
   <!-- MODAL: CONFIGURAR NEGOCIO -->
   <div id="business-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="text-base font-bold text-slate-900">Personalizar Negocio</h3>
         <button onclick="closeBusinessModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
@@ -870,7 +873,7 @@
 
   <!-- MODAL: EDITAR PRODUCTO -->
   <div id="edit-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="text-base font-bold text-slate-900">Editar Producto</h3>
         <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
@@ -935,6 +938,7 @@
     const STORAGE_KEY_REPAIRS = 'techstock_repairs_final';
     const STORAGE_KEY_BIZ = 'techstock_biz_profile_final';
     const STORAGE_KEY_ROLE = 'techstock_role_final';
+    const STORAGE_KEY_INIT = 'techstock_initialized_v2';
 
     let currentRole = localStorage.getItem(STORAGE_KEY_ROLE) || 'admin';
     let filterOnlyCritical = false;
@@ -950,8 +954,11 @@
       logo: null
     };
 
+    const isInitialized = localStorage.getItem(STORAGE_KEY_INIT);
+
     // Datos iniciales de demostración
-    if (products.length === 0 && customers.length === 0) {
+    if (!isInitialized) {
+      localStorage.setItem(STORAGE_KEY_INIT, 'true');
       customers = [
         { id: 'c1', name: 'Juan Manuel Perez', phone: '5491145678901', dni: '34.891.200', segment: 'Frecuente', discount: 5, notes: 'Cliente preferencial' },
         { id: 'c2', name: 'Distribuidora Nova SRL', phone: '5491198765432', dni: '30-71829102-4', segment: 'Mayorista', discount: 12, notes: 'Compras al por mayor' },
@@ -1125,7 +1132,7 @@
       const isAdmin = currentRole === 'admin';
 
       tbody.innerHTML = '';
-      let filtered = products.filter(p => 
+      let filtered = products.filter(p =>
         p.brand.toLowerCase().includes(query) ||
         p.model.toLowerCase().includes(query) ||
         p.imeiCode.toLowerCase().includes(query)
@@ -1276,7 +1283,13 @@
         } else {
           imeiGroup.classList.add('hidden');
           imeiInput.required = false;
+          imeiInput.value = '';
         }
+      } else {
+        document.getElementById('sale-base-price').value = '';
+        imeiGroup.classList.add('hidden');
+        imeiInput.required = false;
+        imeiInput.value = '';
       }
       calculateSaleTotalPreview();
     }
@@ -1284,9 +1297,16 @@
     function calculateSaleTotalPreview() {
       const pId = document.getElementById('sale-product-id').value;
       const prod = products.find(p => p.id === pId);
-      const qty = parseInt(document.getElementById('sale-qty').value) || 1;
-      const basePrice = parseFloat(document.getElementById('sale-base-price').value) || 0;
-      const discPct = parseFloat(document.getElementById('sale-discount-pct').value) || 0;
+      let qty = parseInt(document.getElementById('sale-qty').value);
+      if (isNaN(qty) || qty < 1) qty = 1;
+      let basePrice = parseFloat(document.getElementById('sale-base-price').value);
+      if (isNaN(basePrice) || basePrice < 0) basePrice = 0;
+      let discPct = parseFloat(document.getElementById('sale-discount-pct').value);
+      if (isNaN(discPct) || discPct < 0) discPct = 0;
+      if (discPct > 100) {
+        discPct = 100;
+        document.getElementById('sale-discount-pct').value = 100;
+      }
 
       const unitPriceWithDiscount = basePrice * (1 - (discPct / 100));
       const total = unitPriceWithDiscount * qty;
@@ -1298,6 +1318,8 @@
         const totalProfit = unitMargin * qty;
         const marginPct = unitPriceWithDiscount > 0 ? ((unitMargin / unitPriceWithDiscount) * 100).toFixed(1) : 0;
         document.getElementById('live-margin-text').innerText = `${formatMoney(totalProfit)} (${marginPct}%)`;
+      } else {
+        document.getElementById('live-margin-text').innerText = `$0.00 (0%)`;
       }
     }
 
@@ -1416,12 +1438,68 @@
                 <button onclick="downloadSalePDF('${s.id}')" class="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition" title="Descargar Factura PDF">
                   📄
                 </button>
+                <button onclick="cancelSale('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded col-actions ${isAdmin ? '' : 'hidden'}" title="Anular Venta y Reintegrar Stock">
+                  🗑️
+                </button>
               </div>
             </td>
           `;
           tbody.appendChild(tr);
         });
       }
+    }
+
+    function cancelSale(saleId) {
+      if (!confirm('¿Desea anular esta venta? El stock del producto será reintegrado.')) return;
+      const saleIndex = sales.findIndex(s => s.id === saleId);
+      if (saleIndex !== -1) {
+        const sale = sales[saleIndex];
+        const prod = products.find(p => p.id === sale.productId);
+        if (prod) {
+          prod.stock += sale.quantity;
+        }
+        sales.splice(saleIndex, 1);
+        saveAll();
+        renderSales();
+        renderInventory();
+        populateSelects();
+        showToast('Venta anulada y stock reintegrado');
+      }
+    }
+
+    function cancelPurchase(purchaseId) {
+      if (!confirm('¿Desea eliminar este registro de compra? Se descontará el stock si está disponible.')) return;
+      const purIndex = purchases.findIndex(p => p.id === purchaseId);
+      if (purIndex !== -1) {
+        const pur = purchases[purIndex];
+        const prod = products.find(p => p.id === pur.productId);
+        if (prod) {
+          prod.stock = Math.max(0, prod.stock - pur.quantity);
+        }
+        purchases.splice(purIndex, 1);
+        saveAll();
+        renderPurchases();
+        renderInventory();
+        populateSelects();
+        showToast('Registro de compra eliminado');
+      }
+    }
+
+    function deleteCustomer(customerId) {
+      if (!confirm('¿Desea eliminar este cliente del CRM?')) return;
+      customers = customers.filter(c => c.id !== customerId);
+      saveAll();
+      renderCRM();
+      populateCustomerDropdowns();
+      showToast('Cliente eliminado del CRM');
+    }
+
+    function deleteRepair(repairId) {
+      if (!confirm('¿Desea eliminar esta orden de taller?')) return;
+      repairs = repairs.filter(r => r.id !== repairId);
+      saveAll();
+      renderRepairs();
+      showToast('Orden de taller eliminada');
     }
 
     // --- WHATSAPP Y PDF ---
@@ -1477,7 +1555,7 @@
 
       document.getElementById('pdf-biz-name').innerText = businessProfile.name || 'TechStock Pro';
       document.getElementById('pdf-biz-slogan').innerText = businessProfile.slogan || 'Venta & Garantías';
-      
+
       const logoImg = document.getElementById('pdf-logo-img');
       const logoText = document.getElementById('pdf-logo-text');
       if (businessProfile.logo) {
@@ -1511,7 +1589,6 @@
       document.getElementById('pdf-total-amount').innerText = formatMoney(sale.total);
 
       const template = document.getElementById('pdf-printable-template');
-      template.classList.remove('hidden');
 
       const opt = {
         margin: 10,
@@ -1522,7 +1599,6 @@
       };
 
       html2pdf().set(opt).from(template).save().then(() => {
-        template.classList.add('hidden');
         showToast('Factura PDF descargada con éxito');
       });
     }
@@ -1547,9 +1623,8 @@
         statusBox.innerHTML = `⚠️ <strong>Sin registro previo:</strong> El equipo no figura vendido aquí. Cobro particular.`;
         isWarrantySelect.value = 'false';
       } else {
-        const today = new Date();
-        const expDate = new Date(match.warrantyExpiration);
-        const isValid = today <= expDate;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const isValid = todayStr <= match.warrantyExpiration;
 
         if (isValid) {
           statusBox.className = 'text-xs p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800';
@@ -1690,9 +1765,14 @@
               </select>
             </td>
             <td class="p-3.5 text-center">
-              <button onclick="sendRepairWhatsApp('${r.id}')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition" title="Avisar por WhatsApp">
-                <span>📲 Avisar</span>
-              </button>
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="sendRepairWhatsApp('${r.id}')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition" title="Avisar por WhatsApp">
+                  <span>📲 Avisar</span>
+                </button>
+                <button onclick="deleteRepair('${r.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded col-actions ${currentRole === 'admin' ? '' : 'hidden'}" title="Eliminar orden de taller">
+                  🗑️
+                </button>
+              </div>
             </td>
           `;
           tbody.appendChild(tr);
@@ -1707,7 +1787,7 @@
       const segmentFilter = document.getElementById('filter-crm-segment').value;
 
       tbody.innerHTML = '';
-      let filtered = customers.filter(c => 
+      let filtered = customers.filter(c =>
         c.name.toLowerCase().includes(query) ||
         c.phone.toLowerCase().includes(query) ||
         (c.dni && c.dni.includes(query))
@@ -1748,7 +1828,8 @@
               <button onclick="viewCustomerHistory('${c.id}')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border px-2 py-1 rounded-lg font-semibold transition" title="Ver compras">
                 Historial 🛍️
               </button>
-              <button onclick="editCustomer('${c.id}')" class="text-xs p-1 text-slate-500 hover:text-indigo-600">✏️</button>
+              <button onclick="editCustomer('${c.id}')" class="text-xs p-1 text-slate-500 hover:text-indigo-600" title="Editar">✏️</button>
+              <button onclick="deleteCustomer('${c.id}')" class="text-xs p-1 text-slate-400 hover:text-rose-600 col-actions ${currentRole === 'admin' ? '' : 'hidden'}" title="Eliminar cliente">🗑️</button>
             </div>
           </td>
         `;
@@ -1948,9 +2029,11 @@
 
     function renderPurchases() {
       const tbody = document.getElementById('purchases-table-body');
+      const isAdmin = currentRole === 'admin';
       tbody.innerHTML = '';
       purchases.forEach(p => {
         const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
         tr.innerHTML = `
           <td class="p-3.5 text-xs text-slate-500">${p.date}</td>
           <td class="p-3.5 font-bold text-slate-900">${p.supplier}</td>
@@ -1958,20 +2041,28 @@
           <td class="p-3.5 text-center">${p.quantity}</td>
           <td class="p-3.5 text-right text-slate-600">${formatMoney(p.unitCost)}</td>
           <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(p.total)}</td>
+          <td class="p-3.5 text-center col-actions ${isAdmin ? '' : 'hidden'}">
+            <button onclick="cancelPurchase('${p.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded" title="Eliminar Compra y Restar Stock">🗑️</button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
     function renderBalance() {
-      const totalSales = sales.reduce((acc, curr) => acc + curr.total, 0);
-      const totalPurchases = purchases.reduce((acc, curr) => acc + curr.total, 0);
-      const totalProfit = sales.reduce((acc, curr) => acc + curr.profit, 0);
-      const avgMarginPct = totalSales > 0 ? ((totalProfit / totalSales) * 100).toFixed(1) : 0;
+      const salesTotal = sales.reduce((acc, curr) => acc + curr.total, 0);
+      const deliveredRepairs = repairs.filter(r => r.status === 'Entregado' && !r.isWarranty);
+      const repairsTotal = deliveredRepairs.reduce((acc, curr) => acc + (curr.cost || 0), 0);
 
-      document.getElementById('stat-total-sales').innerText = formatMoney(totalSales);
+      const totalIncome = salesTotal + repairsTotal;
+      const totalPurchases = purchases.reduce((acc, curr) => acc + curr.total, 0);
+      const salesProfit = sales.reduce((acc, curr) => acc + curr.profit, 0);
+      const totalNetProfit = salesProfit + repairsTotal;
+      const avgMarginPct = totalIncome > 0 ? ((totalNetProfit / totalIncome) * 100).toFixed(1) : 0;
+
+      document.getElementById('stat-total-sales').innerText = formatMoney(totalIncome);
       document.getElementById('stat-total-purchases').innerText = formatMoney(totalPurchases);
-      document.getElementById('stat-net-profit').innerText = formatMoney(totalProfit);
+      document.getElementById('stat-net-profit').innerText = formatMoney(totalNetProfit);
       document.getElementById('stat-avg-margin').innerText = `${avgMarginPct}%`;
 
       const tbody = document.getElementById('transactions-table-body');
@@ -1980,6 +2071,7 @@
 
       purchases.forEach(p => transactions.push({ date: p.date, type: 'Compra', desc: `${p.productName} (${p.supplier})`, qty: p.quantity, amount: p.total, isIncome: false }));
       sales.forEach(s => transactions.push({ date: s.date, type: 'Venta', desc: `${s.productName} - Cliente: ${s.customerName}`, qty: s.quantity, amount: s.total, isIncome: true }));
+      deliveredRepairs.forEach(r => transactions.push({ date: r.date, type: 'Taller', desc: `Servicio Técnico: ${r.device} - ${r.customerName}`, qty: 1, amount: r.cost, isIncome: true }));
 
       transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -2146,5 +2238,3 @@
   </script>
 </body>
 </html>
-
-
