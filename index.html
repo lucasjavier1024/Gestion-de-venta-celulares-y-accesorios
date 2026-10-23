@@ -22,17 +22,17 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 min-h-screen text-slate-100 flex flex-col antialiased">
 
   <!-- NOTIFICACIÓN FLOTANTE (TOAST) -->
-  <div id="toast" class="fixed top-5 right-5 z-[100] transform transition-all duration-300 translate-y-[-150%] opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-    <span id="toast-icon" class="font-bold">✓</span>
+  <div id="toast" class="fixed top-5 right-5 z-[100] transform transition-all duration-300 translate-y-[-150%] opacity-0 bg-slate-900/90 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+    <span id="toast-icon" class="font-bold text-emerald-400">✓</span>
     <span id="toast-message" class="text-sm font-medium">Operación exitosa</span>
   </div>
 
   <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
-  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <header class="max-w-7xl mx-auto w-[calc(100%-2rem)] my-3 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-white/10 shadow-2xl sticky top-3 z-30 transition-all duration-300">
+    <div class="px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 gap-3">
 
         <!-- Logo y Nombre Comercial -->
@@ -50,37 +50,37 @@
         </div>
 
         <!-- Selector de Rol Activo -->
-        <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
           <span class="text-xs text-slate-400 hidden sm:inline">Rol:</span>
           <select id="role-selector" onchange="changeUserRole(this.value)" class="bg-transparent text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer">
-            <option value="admin" class="bg-slate-800 text-white">👑 Administrador</option>
-            <option value="vendedor" class="bg-slate-800 text-white">💼 Vendedor</option>
-            <option value="cajero" class="bg-slate-800 text-white">💵 Cajero</option>
+            <option value="admin" class="bg-slate-900 text-white">👑 Administrador</option>
+            <option value="vendedor" class="bg-slate-900 text-white">💼 Vendedor</option>
+            <option value="cajero" class="bg-slate-900 text-white">💵 Cajero</option>
           </select>
         </div>
 
         <!-- Pestañas de Menú (Scrollable en teléfonos) -->
         <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
-          <nav class="flex space-x-1 flex-nowrap">
-            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white whitespace-nowrap">
+          <nav class="flex space-x-1.5 flex-nowrap">
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 whitespace-nowrap">
               Inventario
             </button>
-            <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+            <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-slate-300 hover:text-white hover:bg-white/10 whitespace-nowrap">
               Ventas
             </button>
-            <button onclick="switchTab('purchases')" id="tab-purchases" class="tab-btn role-perm-purchases px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+            <button onclick="switchTab('purchases')" id="tab-purchases" class="tab-btn role-perm-purchases px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-slate-300 hover:text-white hover:bg-white/10 whitespace-nowrap">
               Compras
             </button>
-            <button onclick="switchTab('technical-service')" id="tab-technical-service" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+            <button onclick="switchTab('technical-service')" id="tab-technical-service" class="tab-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-slate-300 hover:text-white hover:bg-white/10 whitespace-nowrap">
               Taller & Garantías
             </button>
-            <button onclick="switchTab('crm')" id="tab-crm" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+            <button onclick="switchTab('crm')" id="tab-crm" class="tab-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-slate-300 hover:text-white hover:bg-white/10 whitespace-nowrap">
               CRM Clientes
             </button>
-            <button onclick="switchTab('balance')" id="tab-balance" class="tab-btn role-perm-balance px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap">
+            <button onclick="switchTab('balance')" id="tab-balance" class="tab-btn role-perm-balance px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-slate-300 hover:text-white hover:bg-white/10 whitespace-nowrap">
               Reportes & Exportar
             </button>
-            <button onclick="openBusinessModal()" id="btn-config" class="role-perm-config p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Configurar Perfil de Negocio">
+            <button onclick="openBusinessModal()" id="btn-config" class="role-perm-config p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-300" title="Configurar Perfil de Negocio">
               ⚙️
             </button>
           </nav>
@@ -109,54 +109,54 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <!-- Formulario (Solo Administrador) -->
-        <div id="product-form-container" class="role-perm-inventory-form bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <div id="product-form-container" class="role-perm-inventory-form bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-6 rounded-2xl shadow-2xl h-fit">
+          <h2 class="text-base font-bold text-slate-100 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Alta de Producto
           </h2>
           <form id="product-form" onsubmit="handleProductSubmit(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Tipo de Mercadería</label>
-              <select id="prod-type" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
-                <option value="Celular">Celular (Requiere IMEI en venta)</option>
-                <option value="Accesorio">Accesorio (Código de Barra)</option>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Tipo de Mercadería</label>
+              <select id="prod-type" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
+                <option value="Celular" class="bg-slate-900 text-slate-100">Celular (Requiere IMEI en venta)</option>
+                <option value="Accesorio" class="bg-slate-900 text-slate-100">Accesorio (Código de Barra)</option>
               </select>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Marca</label>
-                <input type="text" id="prod-brand" placeholder="Samsung, Apple" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Marca</label>
+                <input type="text" id="prod-brand" placeholder="Samsung, Apple" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Modelo</label>
-                <input type="text" id="prod-model" placeholder="Galaxy S23, Funda TPU" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Modelo</label>
+                <input type="text" id="prod-model" placeholder="Galaxy S23, Funda TPU" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Código / Referencia / Lote</label>
-              <input type="text" id="prod-code" placeholder="Código de barra o ID" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Código / Referencia / Lote</label>
+              <input type="text" id="prod-code" placeholder="Código de barra o ID" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo Unitario ($)</label>
-                <input type="number" step="0.01" min="0" id="prod-cost" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Costo Unitario ($)</label>
+                <input type="number" step="0.01" min="0" id="prod-cost" placeholder="0.00" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio Venta ($)</label>
-                <input type="number" step="0.01" min="0" id="prod-price" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Precio Venta ($)</label>
+                <input type="number" step="0.01" min="0" id="prod-price" placeholder="0.00" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
               </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stock Inicial</label>
-                <input type="number" min="0" id="prod-stock" placeholder="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Stock Inicial</label>
+                <input type="number" min="0" id="prod-stock" placeholder="0" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:outline-none transition">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-amber-600 mb-1">Stock Mínimo (Alerta)</label>
-                <input type="number" min="1" id="prod-min-stock" value="2" required class="w-full bg-amber-50/50 border border-amber-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-amber-400 mb-1">Stock Mínimo (Alerta)</label>
+                <input type="number" min="1" id="prod-min-stock" value="2" required class="w-full bg-amber-950/30 border border-amber-500/50 text-amber-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none transition">
               </div>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-lg shadow-indigo-500/30 transition-all duration-300">
               Guardar en Inventario
             </button>
           </form>
@@ -164,23 +164,23 @@
 
         <!-- Tabla Catálogo -->
         <div id="inventory-table-container" class="lg:col-span-2 space-y-4">
-          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <div class="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-4 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div class="relative w-full sm:w-80">
-              <input type="text" id="search-inventory" oninput="renderInventory()" placeholder="Buscar por marca, modelo o código..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none">
+              <input type="text" id="search-inventory" oninput="renderInventory()" placeholder="Buscar por marca, modelo o código..." class="w-full pl-9 pr-4 py-2 bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
               <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
             <div class="flex items-center gap-2">
-              <button id="btn-toggle-critical" onclick="toggleCriticalFilter()" class="text-xs px-3 py-2 rounded-lg border border-amber-300 bg-amber-50 text-amber-800 font-semibold hover:bg-amber-100 transition">
+              <button id="btn-toggle-critical" onclick="toggleCriticalFilter()" class="text-xs px-3 py-2 rounded-xl border border-amber-500/50 bg-amber-950/40 text-amber-300 font-semibold hover:bg-amber-900/60 transition-all duration-300">
                 ⚠️ Solo Stock Bajo
               </button>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                  <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 text-xs uppercase tracking-wider font-semibold">
                     <th class="p-3.5">Producto</th>
                     <th class="p-3.5">Código / Ref</th>
                     <th class="p-3.5 text-right col-cost">Costo</th>
@@ -189,7 +189,7 @@
                     <th class="p-3.5 text-center col-actions">Acciones</th>
                   </tr>
                 </thead>
-                <tbody id="inventory-table-body" class="divide-y divide-slate-100"></tbody>
+                <tbody id="inventory-table-body" class="divide-y divide-slate-800/60 text-slate-100"></tbody>
               </table>
             </div>
             <div id="inventory-empty" class="hidden p-8 text-center text-slate-400 text-sm">
@@ -206,9 +206,9 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <!-- Formulario Venta -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        <div class="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-6 rounded-2xl shadow-2xl h-fit">
+          <h2 class="text-base font-bold text-slate-100 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             Punto de Venta
           </h2>
           <form id="sale-form" onsubmit="handleSaleSubmit(event)" class="space-y-3.5">
@@ -216,11 +216,11 @@
             <!-- Selección de Cliente CRM -->
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="block text-xs font-semibold uppercase text-slate-500">Cliente (CRM)</label>
-                <button type="button" onclick="openCustomerModal()" class="text-xs text-indigo-600 font-semibold hover:underline">+ Nuevo</button>
+                <label class="block text-xs font-semibold uppercase text-slate-400">Cliente (CRM)</label>
+                <button type="button" onclick="openCustomerModal()" class="text-xs text-indigo-400 font-semibold hover:underline">+ Nuevo</button>
               </div>
-              <select id="sale-customer-id" onchange="onCustomerSelectForSale()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
-              <div id="sale-customer-badge" class="mt-1.5 hidden flex items-center justify-between text-[11px] p-2 rounded-lg bg-indigo-50 text-indigo-800">
+              <select id="sale-customer-id" onchange="onCustomerSelectForSale()" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none transition"></select>
+              <div id="sale-customer-badge" class="mt-1.5 hidden flex items-center justify-between text-[11px] p-2 rounded-xl bg-indigo-950/60 border border-indigo-500/30 text-indigo-300">
                 <span id="sale-customer-segment-text">Segmento: Minorista</span>
                 <span id="sale-customer-discount-text" class="font-bold">0% Desc.</span>
               </div>
@@ -228,30 +228,30 @@
 
             <!-- Selección de Producto -->
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Producto en Stock</label>
-              <select id="sale-product-id" onchange="onSaleProductChange()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Producto en Stock</label>
+              <select id="sale-product-id" onchange="onSaleProductChange()" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none transition"></select>
             </div>
 
             <!-- CONTROL DE IMEI Y GARANTÍA -->
-            <div id="imei-field-group" class="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl space-y-2 hidden">
+            <div id="imei-field-group" class="p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-xl space-y-2 hidden">
               <div class="flex items-center justify-between">
-                <label class="block text-xs font-bold uppercase text-indigo-900">IMEI del Celular (15 dígitos)</label>
-                <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded font-mono">Trazabilidad</span>
+                <label class="block text-xs font-bold uppercase text-indigo-300">IMEI del Celular (15 dígitos)</label>
+                <span class="text-[10px] bg-indigo-900/80 text-indigo-200 px-1.5 py-0.5 rounded font-mono border border-indigo-500/30">Trazabilidad</span>
               </div>
-              <input type="text" id="sale-imei" maxlength="18" placeholder="Ingrese IMEI físico del equipo" class="w-full bg-white border border-indigo-300 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <input type="text" id="sale-imei" maxlength="18" placeholder="Ingrese IMEI físico del equipo" class="w-full bg-slate-900 border border-indigo-500/40 text-indigo-200 rounded-xl p-2 text-xs font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
 
               <div class="grid grid-cols-2 gap-2 pt-1">
                 <div>
-                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Meses Garantía</label>
-                  <select id="sale-warranty-months" class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs">
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Meses Garantía</label>
+                  <select id="sale-warranty-months" class="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-xl p-1.5 text-xs">
                     <option value="3">3 meses</option>
                     <option value="6" selected>6 meses</option>
                     <option value="12">12 meses (1 año)</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Condición</label>
-                  <select id="sale-phone-condition" class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs">
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Condición</label>
+                  <select id="sale-phone-condition" class="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-xl p-1.5 text-xs">
                     <option value="Nuevo Sellado">Nuevo Sellado</option>
                     <option value="Seminuevo / Usado">Seminuevo / Usado</option>
                   </select>
@@ -262,57 +262,57 @@
             <!-- Cantidad, Precio Base y Descuento -->
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cant.</label>
-                <input type="number" min="1" id="sale-qty" value="1" oninput="calculateSaleTotalPreview()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Cant.</label>
+                <input type="number" min="1" id="sale-qty" value="1" oninput="calculateSaleTotalPreview()" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio ($)</label>
-                <input type="number" step="0.01" min="0" id="sale-base-price" oninput="calculateSaleTotalPreview()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Precio ($)</label>
+                <input type="number" step="0.01" min="0" id="sale-base-price" oninput="calculateSaleTotalPreview()" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Desc. (%)</label>
-                <input type="number" step="0.5" min="0" max="100" id="sale-discount-pct" value="0" oninput="calculateSaleTotalPreview()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Desc. (%)</label>
+                <input type="number" step="0.5" min="0" max="100" id="sale-discount-pct" value="0" oninput="calculateSaleTotalPreview()" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
               </div>
             </div>
 
             <!-- Total y Margen en Vivo -->
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-              <div class="flex justify-between items-center text-sm font-bold text-slate-900">
+            <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 space-y-1">
+              <div class="flex justify-between items-center text-sm font-bold text-slate-100">
                 <span>Total a Cobrar:</span>
-                <span id="sale-final-total-display" class="text-base text-indigo-600">$ 0.00</span>
+                <span id="sale-final-total-display" class="text-base text-indigo-400">$ 0.00</span>
               </div>
-              <div id="live-margin-preview" class="role-perm-margins text-[11px] flex justify-between text-emerald-700 font-medium">
+              <div id="live-margin-preview" class="role-perm-margins text-[11px] flex justify-between text-emerald-400 font-medium">
                 <span>Margen estimado:</span>
                 <span id="live-margin-text">$0.00 (0%)</span>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Medio de Pago</label>
-              <select id="sale-payment" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
-                <option value="Efectivo">Efectivo</option>
-                <option value="Transferencia">Transferencia Bancaria</option>
-                <option value="Tarjeta de Débito">Tarjeta de Débito</option>
-                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Medio de Pago</label>
+              <select id="sale-payment" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+                <option value="Efectivo" class="bg-slate-900">Efectivo</option>
+                <option value="Transferencia" class="bg-slate-900">Transferencia Bancaria</option>
+                <option value="Tarjeta de Débito" class="bg-slate-900">Tarjeta de Débito</option>
+                <option value="Tarjeta de Crédito" class="bg-slate-900">Tarjeta de Crédito</option>
               </select>
             </div>
 
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-lg shadow-indigo-500/30 transition-all duration-300">
               Emitir Venta
             </button>
           </form>
         </div>
 
         <!-- Tabla Historial Ventas con WhatsApp y PDF -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-4 border-b border-slate-200 font-semibold text-slate-800 flex justify-between items-center">
+        <div class="lg:col-span-2 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
+          <div class="p-4 border-b border-slate-700/70 font-semibold text-slate-200 flex justify-between items-center">
             <span>Registro de Salidas y Facturación</span>
-            <span class="text-xs text-slate-500">Trazabilidad activa</span>
+            <span class="text-xs text-slate-400">Trazabilidad activa</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-sm">
               <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 text-xs uppercase tracking-wider font-semibold">
                   <th class="p-3.5">Fecha / Cliente</th>
                   <th class="p-3.5">Detalle / IMEI</th>
                   <th class="p-3.5 text-center">Cant.</th>
@@ -321,7 +321,7 @@
                   <th class="p-3.5 text-center">Comprobante</th>
                 </tr>
               </thead>
-              <tbody id="sales-table-body" class="divide-y divide-slate-100"></tbody>
+              <tbody id="sales-table-body" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
             </table>
           </div>
           <div id="sales-empty" class="hidden p-8 text-center text-slate-400 text-sm">Sin ventas registradas.</div>
@@ -333,46 +333,46 @@
     <!-- SECCIÓN 3: COMPRAS (ENTRADAS DE MERCADERÍA) -->
     <section id="section-purchases" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <div class="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-6 rounded-2xl shadow-2xl h-fit">
+          <h2 class="text-base font-bold text-slate-100 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             Ingreso de Mercadería
           </h2>
           <form id="purchase-form" onsubmit="handlePurchaseSubmit(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Proveedor / Distribuidor</label>
-              <input type="text" id="pur-supplier" placeholder="Mayorista Tech" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Proveedor / Distribuidor</label>
+              <input type="text" id="pur-supplier" placeholder="Mayorista Tech" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Producto</label>
-              <select id="pur-product-id" onchange="autoFillPurchaseCost()" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Producto</label>
+              <select id="pur-product-id" onchange="autoFillPurchaseCost()" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:outline-none"></select>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cantidad</label>
-                <input type="number" min="1" id="pur-qty" placeholder="1" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Cantidad</label>
+                <input type="number" min="1" id="pur-qty" placeholder="1" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:outline-none">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo Unit. ($)</label>
-                <input type="number" step="0.01" min="0" id="pur-cost" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Costo Unit. ($)</label>
+                <input type="number" step="0.01" min="0" id="pur-cost" placeholder="0.00" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:outline-none">
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha</label>
-              <input type="date" id="pur-date" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Fecha</label>
+              <input type="date" id="pur-date" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-emerald-500/50 focus:outline-none">
             </div>
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+            <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/30 transition-all duration-300">
               Registrar Compra y Sumar Stock
             </button>
           </form>
         </div>
 
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-4 border-b border-slate-200 font-semibold text-slate-800">Historial de Compras</div>
+        <div class="lg:col-span-2 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
+          <div class="p-4 border-b border-slate-700/70 font-semibold text-slate-200">Historial de Compras</div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-sm">
               <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 text-xs uppercase tracking-wider font-semibold">
                   <th class="p-3.5">Fecha</th>
                   <th class="p-3.5">Proveedor</th>
                   <th class="p-3.5">Producto</th>
@@ -382,7 +382,7 @@
                   <th class="p-3.5 text-center col-actions">Acciones</th>
                 </tr>
               </thead>
-              <tbody id="purchases-table-body" class="divide-y divide-slate-100"></tbody>
+              <tbody id="purchases-table-body" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
             </table>
           </div>
         </div>
@@ -394,94 +394,94 @@
 
       <!-- Contadores de Taller -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div class="bg-slate-900/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-2xl">
           <span class="text-xs text-slate-400 font-semibold">PENDIENTES</span>
-          <h3 id="stat-repairs-pending" class="text-xl font-bold text-amber-600">0</h3>
+          <h3 id="stat-repairs-pending" class="text-xl font-bold text-amber-400">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div class="bg-slate-900/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-2xl">
           <span class="text-xs text-slate-400 font-semibold">EN REPARACIÓN</span>
-          <h3 id="stat-repairs-progress" class="text-xl font-bold text-blue-600">0</h3>
+          <h3 id="stat-repairs-progress" class="text-xl font-bold text-sky-400">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div class="bg-slate-900/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-2xl">
           <span class="text-xs text-slate-400 font-semibold">LISTOS / REPARADOS</span>
-          <h3 id="stat-repairs-done" class="text-xl font-bold text-emerald-600">0</h3>
+          <h3 id="stat-repairs-done" class="text-xl font-bold text-emerald-400">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div class="bg-slate-900/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-2xl">
           <span class="text-xs text-slate-400 font-semibold">ENTREGADOS</span>
-          <h3 id="stat-repairs-delivered" class="text-xl font-bold text-slate-600">0</h3>
+          <h3 id="stat-repairs-delivered" class="text-xl font-bold text-slate-300">0</h3>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <!-- Formulario Orden de Reparación -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
-          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+        <div class="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-6 rounded-2xl shadow-2xl h-fit space-y-4">
+          <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
             <span>🔧</span> Nueva Orden de Taller
           </h2>
           <form id="repair-form" onsubmit="handleRepairSubmit(event)" class="space-y-3.5">
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cliente</label>
-              <select id="repair-customer-id" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Cliente</label>
+              <select id="repair-customer-id" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none"></select>
             </div>
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Equipo (Marca & Modelo)</label>
-              <input type="text" id="repair-device" placeholder="iPhone 13, Moto G52" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Equipo (Marca & Modelo)</label>
+              <input type="text" id="repair-device" placeholder="iPhone 13, Moto G52" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">IMEI o N° de Serie</label>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">IMEI o N° de Serie</label>
               <div class="flex gap-2">
-                <input type="text" id="repair-imei" placeholder="IMEI del equipo" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-mono">
-                <button type="button" onclick="checkWarrantyFromRepairForm()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 border text-xs font-semibold rounded-lg text-slate-700 whitespace-nowrap">
+                <input type="text" id="repair-imei" placeholder="IMEI del equipo" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2 text-xs font-mono focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+                <button type="button" onclick="checkWarrantyFromRepairForm()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold rounded-xl text-slate-200 whitespace-nowrap transition">
                   Comprobar
                 </button>
               </div>
             </div>
 
             <!-- Indicador dinámico de Garantía -->
-            <div id="repair-warranty-status" class="hidden text-xs p-2 rounded-lg font-medium"></div>
+            <div id="repair-warranty-status" class="hidden text-xs p-2.5 rounded-xl font-medium"></div>
 
             <div>
-              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Falla Reportada</label>
-              <textarea id="repair-fault" rows="2" placeholder="Rotura de módulo, no carga pin USB..." required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs"></textarea>
+              <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Falla Reportada</label>
+              <textarea id="repair-fault" rows="2" placeholder="Rotura de módulo, no carga pin USB..." required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2 text-xs focus:ring-2 focus:ring-indigo-500/50 focus:outline-none"></textarea>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Presupuesto ($)</label>
-                <input type="number" step="0.01" min="0" id="repair-cost" value="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Presupuesto ($)</label>
+                <input type="number" step="0.01" min="0" id="repair-cost" value="0.00" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
               </div>
               <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">¿Cubre Garantía?</label>
-                <select id="repair-is-warranty" onchange="onWarrantyToggleChange()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium">
-                  <option value="false">No (Particular)</option>
-                  <option value="true">Sí (Garantía Local)</option>
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">¿Cubre Garantía?</label>
+                <select id="repair-is-warranty" onchange="onWarrantyToggleChange()" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+                  <option value="false" class="bg-slate-900">No (Particular)</option>
+                  <option value="true" class="bg-slate-900">Sí (Garantía Local)</option>
                 </select>
               </div>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm shadow transition">
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-lg shadow-indigo-500/30 transition-all duration-300">
               Generar Ticket de Taller
             </button>
           </form>
         </div>
 
         <!-- Tabla Órdenes de Reparación -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <h3 class="font-bold text-slate-800">Órdenes de Reparación & Taller</h3>
+        <div class="lg:col-span-2 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
+          <div class="p-4 border-b border-slate-700/70 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <h3 class="font-bold text-slate-100">Órdenes de Reparación & Taller</h3>
             <div class="flex gap-2">
-              <select id="filter-repair-status" onchange="renderRepairs()" class="text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 font-medium">
-                <option value="todos">Todos los Estados</option>
-                <option value="Pendiente">Pendientes</option>
-                <option value="En reparación">En reparación</option>
-                <option value="Reparado">Reparados</option>
-                <option value="Entregado">Entregados</option>
+              <select id="filter-repair-status" onchange="renderRepairs()" class="text-xs bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-2.5 py-1.5 font-medium focus:outline-none">
+                <option value="todos" class="bg-slate-900">Todos los Estados</option>
+                <option value="Pendiente" class="bg-slate-900">Pendientes</option>
+                <option value="En reparación" class="bg-slate-900">En reparación</option>
+                <option value="Reparado" class="bg-slate-900">Reparados</option>
+                <option value="Entregado" class="bg-slate-900">Entregados</option>
               </select>
             </div>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-sm">
               <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 text-xs uppercase tracking-wider font-semibold">
                   <th class="p-3.5">Ticket / Fecha</th>
                   <th class="p-3.5">Cliente & Equipo</th>
                   <th class="p-3.5">Falla & Garantía</th>
@@ -490,7 +490,7 @@
                   <th class="p-3.5 text-center">Aviso WhatsApp</th>
                 </tr>
               </thead>
-              <tbody id="repairs-table-body" class="divide-y divide-slate-100"></tbody>
+              <tbody id="repairs-table-body" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
             </table>
           </div>
           <div id="repairs-empty" class="hidden p-8 text-center text-slate-400 text-sm">
@@ -503,30 +503,30 @@
 
     <!-- SECCIÓN 5: CRM BÁSICO & MARKETING -->
     <section id="section-crm" class="hidden space-y-6">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-slate-700/50 shadow-2xl">
         <div>
-          <h2 class="text-base font-bold text-slate-900">Directorio de Clientes & CRM</h2>
-          <p class="text-xs text-slate-500">Historial de compras, segmentación y envío de promociones por WhatsApp.</p>
+          <h2 class="text-base font-bold text-slate-100">Directorio de Clientes & CRM</h2>
+          <p class="text-xs text-slate-400">Historial de compras, segmentación y envío de promociones por WhatsApp.</p>
         </div>
-        <button onclick="openCustomerModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-1.5">
+        <button onclick="openCustomerModal()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-lg shadow-indigo-500/30 transition-all duration-300 flex items-center gap-1.5">
           <span>+</span> Registrar Nuevo Cliente
         </button>
       </div>
 
       <!-- Tabla Clientes -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="bg-slate-900/60 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden">
+        <div class="p-4 border-b border-slate-700/70 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div class="relative w-full sm:w-80">
-            <input type="text" id="search-crm" oninput="renderCRM()" placeholder="Buscar por nombre o teléfono..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none">
+            <input type="text" id="search-crm" oninput="renderCRM()" placeholder="Buscar por nombre o teléfono..." class="w-full pl-9 pr-4 py-2 bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </div>
           <div class="flex items-center gap-2 text-xs">
-            <span class="text-slate-500">Segmento:</span>
-            <select id="filter-crm-segment" onchange="renderCRM()" class="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1.5 font-medium">
-              <option value="todos">Todos los Segmentos</option>
-              <option value="Mayorista">Mayoristas</option>
-              <option value="Frecuente">Frecuentes</option>
-              <option value="Minorista">Minoristas</option>
+            <span class="text-slate-400">Segmento:</span>
+            <select id="filter-crm-segment" onchange="renderCRM()" class="bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-2.5 py-1.5 font-medium focus:outline-none">
+              <option value="todos" class="bg-slate-900">Todos los Segmentos</option>
+              <option value="Mayorista" class="bg-slate-900">Mayoristas</option>
+              <option value="Frecuente" class="bg-slate-900">Frecuentes</option>
+              <option value="Minorista" class="bg-slate-900">Minoristas</option>
             </select>
           </div>
         </div>
@@ -534,7 +534,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+              <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 text-xs uppercase tracking-wider font-semibold">
                 <th class="p-3.5">Cliente</th>
                 <th class="p-3.5">Contacto</th>
                 <th class="p-3.5 text-center">Segmento</th>
@@ -543,7 +543,7 @@
                 <th class="p-3.5 text-center">Acciones</th>
               </tr>
             </thead>
-            <tbody id="crm-table-body" class="divide-y divide-slate-100"></tbody>
+            <tbody id="crm-table-body" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
           </table>
         </div>
       </div>
@@ -553,18 +553,18 @@
     <section id="section-balance" class="hidden space-y-6">
 
       <!-- CENTRO DE EXPORTACIÓN A EXCEL/CSV -->
-      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="bg-slate-900/80 backdrop-blur-md border border-white/10 text-white p-6 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h3 class="text-base font-bold flex items-center gap-2">
             <span>📊</span> Centro de Exportación a Excel / CSV
           </h3>
-          <p class="text-xs text-slate-300 mt-1">Descarga planillas con caracteres en español (BOM UTF-8) listas para abrir en Excel.</p>
+          <p class="text-xs text-slate-400 mt-1">Descarga planillas con caracteres en español (BOM UTF-8) listas para abrir en Excel.</p>
         </div>
         <div class="flex flex-wrap gap-2">
           <button onclick="exportData('inventory')" class="bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
             📥 Inventario (.CSV)
           </button>
-          <button onclick="exportData('sales')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1.5">
+          <button onclick="exportData('sales')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/30 transition flex items-center gap-1.5">
             📥 Ventas (.CSV)
           </button>
           <button onclick="exportData('purchases')" class="role-perm-purchases bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
@@ -581,37 +581,37 @@
 
       <!-- Tarjetas Financieras -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="bg-slate-900/60 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-2xl">
           <p class="text-xs font-semibold uppercase text-slate-400">Total Ventas</p>
-          <h3 id="stat-total-sales" class="text-2xl font-bold text-slate-900 mt-1">$0.00</h3>
-          <span class="text-[11px] text-slate-500">Ingresos brutos acumulados</span>
+          <h3 id="stat-total-sales" class="text-2xl font-bold text-slate-100 mt-1">$0.00</h3>
+          <span class="text-[11px] text-slate-400">Ingresos brutos acumulados</span>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm role-perm-purchases">
+        <div class="bg-slate-900/60 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-2xl role-perm-purchases">
           <p class="text-xs font-semibold uppercase text-slate-400">Total Compras</p>
-          <h3 id="stat-total-purchases" class="text-2xl font-bold text-slate-900 mt-1">$0.00</h3>
-          <span class="text-[11px] text-slate-500">Costo de mercadería</span>
+          <h3 id="stat-total-purchases" class="text-2xl font-bold text-slate-100 mt-1">$0.00</h3>
+          <span class="text-[11px] text-slate-400">Costo de mercadería</span>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm role-perm-margins">
+        <div class="bg-slate-900/60 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-2xl role-perm-margins">
           <p class="text-xs font-semibold uppercase text-slate-400">Ganancia Neta Real</p>
-          <h3 id="stat-net-profit" class="text-2xl font-bold text-emerald-600 mt-1">$0.00</h3>
-          <span class="text-[11px] text-emerald-700">Margen real de lo vendido</span>
+          <h3 id="stat-net-profit" class="text-2xl font-bold text-emerald-400 mt-1">$0.00</h3>
+          <span class="text-[11px] text-emerald-500">Margen real de lo vendido</span>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm role-perm-margins">
+        <div class="bg-slate-900/60 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-2xl role-perm-margins">
           <p class="text-xs font-semibold uppercase text-slate-400">Margen Promedio</p>
-          <h3 id="stat-avg-margin" class="text-2xl font-bold text-indigo-600 mt-1">0%</h3>
-          <span class="text-[11px] text-indigo-700">Rentabilidad media comercial</span>
+          <h3 id="stat-avg-margin" class="text-2xl font-bold text-indigo-400 mt-1">0%</h3>
+          <span class="text-[11px] text-indigo-400">Rentabilidad media comercial</span>
         </div>
       </div>
 
       <!-- Historial Global Cronológico -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-4 border-b border-slate-200 font-semibold text-slate-800">
+      <div class="bg-slate-900/60 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden">
+        <div class="p-4 border-b border-slate-700/70 font-semibold text-slate-200">
           Auditoría Cronológica de Flujo Comercial
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+              <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 text-xs uppercase tracking-wider font-semibold">
                 <th class="p-3.5">Fecha</th>
                 <th class="p-3.5">Tipo</th>
                 <th class="p-3.5">Detalle Operación</th>
@@ -619,7 +619,7 @@
                 <th class="p-3.5 text-right">Monto</th>
               </tr>
             </thead>
-            <tbody id="transactions-table-body" class="divide-y divide-slate-100"></tbody>
+            <tbody id="transactions-table-body" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
           </table>
         </div>
       </div>
@@ -628,27 +628,27 @@
   </main>
 
   <!-- MODAL: VENTA EXITOSA (WHATSAPP Y PDF) -->
-  <div id="sale-success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-center max-h-[90vh] overflow-y-auto">
-      <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+  <div id="sale-success-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900/90 border border-slate-700/60 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-center max-h-[90vh] overflow-y-auto">
+      <div class="w-14 h-14 bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
         ✓
       </div>
       <div>
-        <h3 class="text-lg font-bold text-slate-900">¡Venta Registrada con Éxito!</h3>
-        <p class="text-xs text-slate-500 mt-1">El stock fue descontado. ¿Cómo deseas emitir el comprobante?</p>
+        <h3 class="text-lg font-bold text-slate-100">¡Venta Registrada con Éxito!</h3>
+        <p class="text-xs text-slate-400 mt-1">El stock fue descontado. ¿Cómo deseas emitir el comprobante?</p>
       </div>
 
       <div class="space-y-2 pt-2">
-        <button id="btn-success-whatsapp" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 shadow transition">
+        <button id="btn-success-whatsapp" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all duration-300">
           <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
           Enviar Comprobante por WhatsApp
         </button>
 
-        <button id="btn-success-pdf" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 shadow transition">
+        <button id="btn-success-pdf" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 transition-all duration-300">
           <span>📄</span> Descargar Factura / Ticket en PDF
         </button>
 
-        <button onclick="closeSaleSuccessModal()" class="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2 rounded-xl text-sm transition">
+        <button onclick="closeSaleSuccessModal()" class="w-full border border-slate-700 hover:bg-slate-800/60 text-slate-300 font-medium py-2 rounded-xl text-sm transition-all duration-300">
           Finalizar y Cerrar
         </button>
       </div>
@@ -656,34 +656,34 @@
   </div>
 
   <!-- MODAL: MENSAJES Y PROMOS WHATSAPP -->
-  <div id="promo-whatsapp-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+  <div id="promo-whatsapp-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900/90 border border-slate-700/60 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
           <span>📲</span> WhatsApp Marketing & Avisos
         </h3>
-        <button onclick="closePromoModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+        <button onclick="closePromoModal()" class="text-slate-400 hover:text-slate-200 font-bold">&times;</button>
       </div>
       <div class="space-y-3">
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Destinatario</label>
-          <input type="text" id="promo-client-name" readonly class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2.5 text-sm font-semibold">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Destinatario</label>
+          <input type="text" id="promo-client-name" readonly class="w-full bg-slate-800/80 border border-slate-700 text-slate-200 rounded-xl p-2.5 text-sm font-semibold">
           <input type="hidden" id="promo-client-phone">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Plantilla Rápida</label>
-          <select id="promo-template-select" onchange="applyPromoTemplate()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs">
-            <option value="promo_accesorios">Promoción Especial en Accesorios</option>
-            <option value="ingreso_equipos">Nuevos Modelos de Celulares Disponibles</option>
-            <option value="saludo_frecuente">Beneficio por Cliente Frecuente</option>
-            <option value="personalizado">Mensaje Personalizado</option>
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Plantilla Rápida</label>
+          <select id="promo-template-select" onchange="applyPromoTemplate()" class="w-full bg-slate-800/80 border border-slate-700 text-slate-200 rounded-xl p-2 text-xs">
+            <option value="promo_accesorios" class="bg-slate-900">Promoción Especial en Accesorios</option>
+            <option value="ingreso_equipos" class="bg-slate-900">Nuevos Modelos de Celulares Disponibles</option>
+            <option value="saludo_frecuente" class="bg-slate-900">Beneficio por Cliente Frecuente</option>
+            <option value="personalizado" class="bg-slate-900">Mensaje Personalizado</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Mensaje</label>
-          <textarea id="promo-custom-text" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs focus:outline-none"></textarea>
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Mensaje</label>
+          <textarea id="promo-custom-text" rows="5" class="w-full bg-slate-800/80 border border-slate-700 text-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500/50 focus:outline-none"></textarea>
         </div>
-        <button onclick="sendPromoWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow transition">
+        <button onclick="sendPromoWhatsApp()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all duration-300">
           Abrir Chat en WhatsApp 🚀
         </button>
       </div>
@@ -759,69 +759,69 @@
   </div>
 
   <!-- MODAL: REGISTRAR / EDITAR CLIENTE (CRM) -->
-  <div id="customer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="text-base font-bold text-slate-900">Registrar / Editar Cliente</h3>
-        <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+  <div id="customer-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900/90 border border-slate-700/60 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-100">Registrar / Editar Cliente</h3>
+        <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-200 font-bold">&times;</button>
       </div>
       <form id="customer-form" onsubmit="handleCustomerSubmit(event)" class="space-y-3.5">
         <input type="hidden" id="cust-id">
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre Completo / Razón Social</label>
-          <input type="text" id="cust-name" required placeholder="Ej: Juan Perez o TecnoStore SRL" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nombre Completo / Razón Social</label>
+          <input type="text" id="cust-name" required placeholder="Ej: Juan Perez o TecnoStore SRL" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">WhatsApp (con cód. país)</label>
-            <input type="text" id="cust-phone" required placeholder="Ej: 5491112345678" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">WhatsApp (con cód. país)</label>
+            <input type="text" id="cust-phone" required placeholder="Ej: 5491112345678" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">DNI / CUIT</label>
-            <input type="text" id="cust-dni" placeholder="Identificación fiscal" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">DNI / CUIT</label>
+            <input type="text" id="cust-dni" placeholder="Identificación fiscal" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Segmento</label>
-            <select id="cust-segment" onchange="autoSuggestSegmentDiscount()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium">
-              <option value="Minorista">Minorista</option>
-              <option value="Frecuente">Cliente Frecuente</option>
-              <option value="Mayorista">Mayorista / Gremio</option>
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Segmento</label>
+            <select id="cust-segment" onchange="autoSuggestSegmentDiscount()" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+              <option value="Minorista" class="bg-slate-900">Minorista</option>
+              <option value="Frecuente" class="bg-slate-900">Cliente Frecuente</option>
+              <option value="Mayorista" class="bg-slate-900">Mayorista / Gremio</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">% Descuento Fijo</label>
-            <input type="number" step="0.5" min="0" max="100" id="cust-discount" value="0" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">% Descuento Fijo</label>
+            <input type="number" step="0.5" min="0" max="100" id="cust-discount" value="0" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Notas / Preferencias</label>
-          <input type="text" id="cust-notes" placeholder="Ej: Compra siempre accesorios Samsung" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Notas / Preferencias</label>
+          <input type="text" id="cust-notes" placeholder="Ej: Compra siempre accesorios Samsung" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeCustomerModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Guardar Cliente</button>
+          <button type="button" onclick="closeCustomerModal()" class="px-4 py-2 border border-slate-700 text-slate-300 hover:bg-slate-800 rounded-xl text-sm transition">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-300">Guardar Cliente</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- MODAL: HISTORIAL DE COMPRAS (CRM) -->
-  <div id="customer-history-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
-      <div class="flex justify-between items-center border-b pb-3">
+  <div id="customer-history-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900/90 border border-slate-700/60 text-slate-100 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
         <div>
-          <h3 id="history-modal-cust-name" class="text-base font-bold text-slate-900">Historial de Compras</h3>
+          <h3 id="history-modal-cust-name" class="text-base font-bold text-slate-100">Historial de Compras</h3>
           <p id="history-modal-cust-segment" class="text-xs text-slate-400">Segmento</p>
         </div>
-        <button onclick="closeCustomerHistoryModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+        <button onclick="closeCustomerHistoryModal()" class="text-slate-400 hover:text-slate-200 font-bold">&times;</button>
       </div>
 
       <div class="overflow-y-auto flex-1">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="bg-slate-50 border-b text-slate-500 uppercase font-semibold">
+            <tr class="bg-slate-800/80 border-b border-slate-700/70 text-slate-300 uppercase font-semibold">
               <th class="p-2.5">Fecha</th>
               <th class="p-2.5">Producto</th>
               <th class="p-2.5 font-mono">IMEI</th>
@@ -829,101 +829,101 @@
               <th class="p-2.5 text-right">Total</th>
             </tr>
           </thead>
-          <tbody id="customer-history-tbody" class="divide-y divide-slate-100"></tbody>
+          <tbody id="customer-history-tbody" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
         </table>
         <div id="customer-history-empty" class="hidden p-6 text-center text-slate-400 text-xs">
           Este cliente aún no registra compras en el local.
         </div>
       </div>
 
-      <div class="border-t pt-3 flex justify-between items-center text-xs font-bold text-slate-800">
+      <div class="border-t border-slate-800 pt-3 flex justify-between items-center text-xs font-bold text-slate-200">
         <span>Total Acumulado:</span>
-        <span id="history-modal-total" class="text-sm text-emerald-600">$0.00</span>
+        <span id="history-modal-total" class="text-sm text-emerald-400">$0.00</span>
       </div>
     </div>
   </div>
 
   <!-- MODAL: CONFIGURAR NEGOCIO -->
-  <div id="business-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="text-base font-bold text-slate-900">Personalizar Negocio</h3>
-        <button onclick="closeBusinessModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+  <div id="business-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900/90 border border-slate-700/60 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-100">Personalizar Negocio</h3>
+        <button onclick="closeBusinessModal()" class="text-slate-400 hover:text-slate-200 font-bold">&times;</button>
       </div>
       <form onsubmit="saveBusinessProfile(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre Comercial</label>
-          <input type="text" id="input-biz-name" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nombre Comercial</label>
+          <input type="text" id="input-biz-name" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Subtítulo / Rubro</label>
-          <input type="text" id="input-biz-slogan" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Subtítulo / Rubro</label>
+          <input type="text" id="input-biz-slogan" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Logo</label>
-          <input type="file" id="input-biz-logo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Logo</label>
+          <input type="file" id="input-biz-logo" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-950 file:text-indigo-300 hover:file:bg-indigo-900 cursor-pointer">
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeBusinessModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Guardar</button>
+          <button type="button" onclick="closeBusinessModal()" class="px-4 py-2 border border-slate-700 text-slate-300 hover:bg-slate-800 rounded-xl text-sm transition">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-300">Guardar</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- MODAL: EDITAR PRODUCTO -->
-  <div id="edit-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="text-base font-bold text-slate-900">Editar Producto</h3>
-        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+  <div id="edit-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900/90 border border-slate-700/60 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-100">Editar Producto</h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-200 font-bold">&times;</button>
       </div>
       <form id="edit-product-form" onsubmit="handleEditProductSubmit(event)" class="space-y-3">
         <input type="hidden" id="edit-id">
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Tipo</label>
-          <select id="edit-type" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
-            <option value="Celular">Celular</option>
-            <option value="Accesorio">Accesorio</option>
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Tipo</label>
+          <select id="edit-type" class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+            <option value="Celular" class="bg-slate-900">Celular</option>
+            <option value="Accesorio" class="bg-slate-900">Accesorio</option>
           </select>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Marca</label>
-            <input type="text" id="edit-brand" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Marca</label>
+            <input type="text" id="edit-brand" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Modelo</label>
-            <input type="text" id="edit-model" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Modelo</label>
+            <input type="text" id="edit-model" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Código / Ref</label>
-          <input type="text" id="edit-code" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Código / Ref</label>
+          <input type="text" id="edit-code" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo ($)</label>
-            <input type="number" step="0.01" min="0" id="edit-cost" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Costo ($)</label>
+            <input type="number" step="0.01" min="0" id="edit-cost" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Venta ($)</label>
-            <input type="number" step="0.01" min="0" id="edit-price" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Venta ($)</label>
+            <input type="number" step="0.01" min="0" id="edit-price" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stock</label>
-            <input type="number" min="0" id="edit-stock" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Stock</label>
+            <input type="number" min="0" id="edit-stock" required class="w-full bg-slate-800/80 border border-slate-700 text-slate-100 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-amber-600 mb-1">Stock Mínimo</label>
-            <input type="number" min="1" id="edit-min-stock" required class="w-full bg-amber-50/50 border border-amber-300 rounded-lg p-2.5 text-sm">
+            <label class="block text-xs font-semibold uppercase text-amber-400 mb-1">Stock Mínimo</label>
+            <input type="number" min="1" id="edit-min-stock" required class="w-full bg-amber-950/30 border border-amber-500/50 text-amber-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none">
           </div>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Actualizar</button>
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 border border-slate-700 text-slate-300 hover:bg-slate-800 rounded-xl text-sm transition">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-300">Actualizar</button>
         </div>
       </form>
     </div>
@@ -1080,10 +1080,10 @@
         if (sec && btn) {
           if (t === tabId) {
             sec.classList.remove('hidden');
-            btn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white whitespace-nowrap';
+            btn.className = 'tab-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 whitespace-nowrap';
           } else {
             sec.classList.add('hidden');
-            btn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap';
+            btn.className = 'tab-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-slate-300 hover:text-white hover:bg-white/10 whitespace-nowrap';
           }
         }
       });
@@ -1149,19 +1149,19 @@
         filtered.forEach(p => {
           const isCritical = p.stock <= (p.minStock || 2);
           const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-50 transition';
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
           tr.innerHTML = `
             <td class="p-3.5">
               <div class="flex items-center gap-2">
-                <span class="text-[10px] px-2 py-0.5 rounded-full border ${p.type === 'Celular' ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'} font-semibold">${p.type}</span>
-                <span class="font-bold text-slate-900">${p.brand} ${p.model}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full border ${p.type === 'Celular' ? 'bg-sky-950/80 text-sky-300 border-sky-500/40' : 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'} font-semibold">${p.type}</span>
+                <span class="font-bold text-slate-100">${p.brand} ${p.model}</span>
               </div>
             </td>
-            <td class="p-3.5 font-mono text-xs text-slate-500">${p.imeiCode}</td>
-            <td class="p-3.5 text-right font-medium text-slate-600 col-cost ${isAdmin ? '' : 'hidden'}">${formatMoney(p.costPrice)}</td>
-            <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(p.salePrice)}</td>
+            <td class="p-3.5 font-mono text-xs text-slate-400">${p.imeiCode}</td>
+            <td class="p-3.5 text-right font-medium text-slate-300 col-cost ${isAdmin ? '' : 'hidden'}">${formatMoney(p.costPrice)}</td>
+            <td class="p-3.5 text-right font-bold text-slate-100">${formatMoney(p.salePrice)}</td>
             <td class="p-3.5 text-center">
-              <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isCritical ? 'bg-rose-100 text-rose-700 border border-rose-300' : 'bg-slate-100 text-slate-700'}">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isCritical ? 'bg-rose-950/80 text-rose-300 border border-rose-500/40' : 'bg-slate-800/80 text-slate-200 border border-slate-700'}">
                 ${p.stock} u. ${isCritical ? `(Mín: ${p.minStock || 2}) ⚠️` : ''}
               </span>
             </td>
@@ -1413,32 +1413,32 @@
         emptyMsg.classList.add('hidden');
         sales.forEach(s => {
           const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-50 transition';
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
           tr.innerHTML = `
             <td class="p-3.5">
               <span class="text-xs text-slate-400 block">${s.date}</span>
-              <strong class="text-slate-900">${s.customerName}</strong>
+              <strong class="text-slate-100">${s.customerName}</strong>
             </td>
             <td class="p-3.5">
-              <div class="font-medium text-slate-800">${s.productName}</div>
-              ${s.isPhone ? `<span class="inline-block mt-0.5 font-mono text-[11px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border">IMEI: ${s.imei}</span>` : ''}
-              ${s.discountPct > 0 ? `<span class="inline-block ml-1 text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold">${s.discountPct}% OFF</span>` : ''}
+              <div class="font-medium text-slate-200">${s.productName}</div>
+              ${s.isPhone ? `<span class="inline-block mt-0.5 font-mono text-[11px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700">IMEI: ${s.imei}</span>` : ''}
+              ${s.discountPct > 0 ? `<span class="inline-block ml-1 text-[10px] bg-indigo-950/80 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded font-bold">${s.discountPct}% OFF</span>` : ''}
             </td>
-            <td class="p-3.5 text-center font-bold text-slate-700">${s.quantity}</td>
-            <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(s.total)}</td>
+            <td class="p-3.5 text-center font-bold text-slate-200">${s.quantity}</td>
+            <td class="p-3.5 text-right font-bold text-slate-100">${formatMoney(s.total)}</td>
             <td class="p-3.5 text-right role-perm-margins ${isAdmin ? '' : 'hidden'}">
-              <span class="font-bold text-emerald-600">${formatMoney(s.profit)}</span>
+              <span class="font-bold text-emerald-400">${formatMoney(s.profit)}</span>
               <span class="text-[11px] text-slate-400 block">(${s.marginPct}%)</span>
             </td>
             <td class="p-3.5 text-center">
               <div class="flex items-center justify-center gap-1.5">
-                <button onclick="sendSaleWhatsApp('${s.id}')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition" title="Enviar Comprobante por WhatsApp">
+                <button onclick="sendSaleWhatsApp('${s.id}')" class="p-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 rounded-lg transition" title="Enviar Comprobante por WhatsApp">
                   📲
                 </button>
-                <button onclick="downloadSalePDF('${s.id}')" class="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition" title="Descargar Factura PDF">
+                <button onclick="downloadSalePDF('${s.id}')" class="p-1.5 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-300 rounded-lg transition" title="Descargar Factura PDF">
                   📄
                 </button>
-                <button onclick="cancelSale('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded col-actions ${isAdmin ? '' : 'hidden'}" title="Anular Venta y Reintegrar Stock">
+                <button onclick="cancelSale('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-400 rounded col-actions ${isAdmin ? '' : 'hidden'}" title="Anular Venta y Reintegrar Stock">
                   🗑️
                 </button>
               </div>
@@ -1735,41 +1735,41 @@
       } else {
         emptyMsg.classList.add('hidden');
         filtered.forEach(r => {
-          let badgeColor = 'bg-amber-100 text-amber-800';
-          if (r.status === 'En reparación') badgeColor = 'bg-blue-100 text-blue-800';
-          if (r.status === 'Reparado') badgeColor = 'bg-emerald-100 text-emerald-800';
-          if (r.status === 'Entregado') badgeColor = 'bg-slate-200 text-slate-700';
+          let badgeColor = 'bg-amber-950/80 text-amber-300 border-amber-500/40';
+          if (r.status === 'En reparación') badgeColor = 'bg-sky-950/80 text-sky-300 border-sky-500/40';
+          if (r.status === 'Reparado') badgeColor = 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40';
+          if (r.status === 'Entregado') badgeColor = 'bg-slate-800 text-slate-300 border-slate-700';
 
           const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-50 transition';
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
           tr.innerHTML = `
             <td class="p-3.5">
-              <span class="font-bold text-indigo-700 block">${r.ticket}</span>
+              <span class="font-bold text-indigo-400 block">${r.ticket}</span>
               <span class="text-xs text-slate-400">${r.date}</span>
             </td>
             <td class="p-3.5">
-              <strong class="text-slate-900 block">${r.customerName}</strong>
-              <span class="text-xs text-slate-500">${r.device} ${r.imei !== 'N/A' ? `(${r.imei})` : ''}</span>
+              <strong class="text-slate-100 block">${r.customerName}</strong>
+              <span class="text-xs text-slate-400">${r.device} ${r.imei !== 'N/A' ? `(${r.imei})` : ''}</span>
             </td>
             <td class="p-3.5 text-xs">
-              <p class="text-slate-700 max-w-xs truncate">${r.fault}</p>
-              ${r.isWarranty ? '<span class="inline-block text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded mt-0.5">En Garantía</span>' : '<span class="text-[10px] text-slate-400">Presupuesto Particular</span>'}
+              <p class="text-slate-300 max-w-xs truncate">${r.fault}</p>
+              ${r.isWarranty ? '<span class="inline-block text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 font-bold px-1.5 py-0.5 rounded mt-0.5">En Garantía</span>' : '<span class="text-[10px] text-slate-400">Presupuesto Particular</span>'}
             </td>
-            <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(r.cost)}</td>
+            <td class="p-3.5 text-right font-bold text-slate-100">${formatMoney(r.cost)}</td>
             <td class="p-3.5 text-center">
-              <select onchange="updateRepairStatus('${r.id}', this.value)" class="text-xs font-bold ${badgeColor} border rounded-lg px-2 py-1 focus:outline-none">
-                <option value="Pendiente" ${r.status === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                <option value="En reparación" ${r.status === 'En reparación' ? 'selected' : ''}>En reparación</option>
-                <option value="Reparado" ${r.status === 'Reparado' ? 'selected' : ''}>Reparado</option>
-                <option value="Entregado" ${r.status === 'Entregado' ? 'selected' : ''}>Entregado</option>
+              <select onchange="updateRepairStatus('${r.id}', this.value)" class="text-xs font-bold ${badgeColor} border rounded-lg px-2 py-1 focus:outline-none cursor-pointer">
+                <option value="Pendiente" class="bg-slate-900 text-amber-300" ${r.status === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                <option value="En reparación" class="bg-slate-900 text-sky-300" ${r.status === 'En reparación' ? 'selected' : ''}>En reparación</option>
+                <option value="Reparado" class="bg-slate-900 text-emerald-300" ${r.status === 'Reparado' ? 'selected' : ''}>Reparado</option>
+                <option value="Entregado" class="bg-slate-900 text-slate-300" ${r.status === 'Entregado' ? 'selected' : ''}>Entregado</option>
               </select>
             </td>
             <td class="p-3.5 text-center">
               <div class="flex items-center justify-center gap-1.5">
-                <button onclick="sendRepairWhatsApp('${r.id}')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition" title="Avisar por WhatsApp">
+                <button onclick="sendRepairWhatsApp('${r.id}')" class="p-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition" title="Avisar por WhatsApp">
                   <span>📲 Avisar</span>
                 </button>
-                <button onclick="deleteRepair('${r.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded col-actions ${currentRole === 'admin' ? '' : 'hidden'}" title="Eliminar orden de taller">
+                <button onclick="deleteRepair('${r.id}')" class="p-1.5 text-slate-400 hover:text-rose-400 rounded col-actions ${currentRole === 'admin' ? '' : 'hidden'}" title="Eliminar orden de taller">
                   🗑️
                 </button>
               </div>
@@ -1801,35 +1801,35 @@
         const customerSales = sales.filter(s => s.customerId === c.id);
         const totalSpent = customerSales.reduce((acc, curr) => acc + curr.total, 0);
 
-        let segmentBadge = 'bg-slate-100 text-slate-700 border-slate-200';
-        if (c.segment === 'Mayorista') segmentBadge = 'bg-purple-100 text-purple-800 border-purple-300';
-        if (c.segment === 'Frecuente') segmentBadge = 'bg-sky-100 text-sky-800 border-sky-300';
+        let segmentBadge = 'bg-slate-800 text-slate-300 border-slate-700';
+        if (c.segment === 'Mayorista') segmentBadge = 'bg-purple-950/80 text-purple-300 border-purple-500/40';
+        if (c.segment === 'Frecuente') segmentBadge = 'bg-sky-950/80 text-sky-300 border-sky-500/40';
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition';
+        tr.className = 'hover:bg-slate-800/50 transition-colors';
         tr.innerHTML = `
           <td class="p-3.5">
-            <strong class="text-slate-900 block">${c.name}</strong>
+            <strong class="text-slate-100 block">${c.name}</strong>
             <span class="text-xs text-slate-400">${c.dni || 'Sin DNI/CUIT'}</span>
           </td>
-          <td class="p-3.5 text-xs text-slate-600">
+          <td class="p-3.5 text-xs text-slate-300">
             <span>📞 +${cleanPhone(c.phone)}</span>
           </td>
           <td class="p-3.5 text-center">
             <span class="text-xs px-2.5 py-1 rounded-full font-bold border ${segmentBadge}">${c.segment}</span>
           </td>
-          <td class="p-3.5 text-center font-bold text-indigo-600">${c.discount || 0}%</td>
-          <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(totalSpent)}</td>
+          <td class="p-3.5 text-center font-bold text-indigo-400">${c.discount || 0}%</td>
+          <td class="p-3.5 text-right font-bold text-slate-100">${formatMoney(totalSpent)}</td>
           <td class="p-3.5 text-center">
             <div class="flex items-center justify-center gap-1.5">
-              <button onclick="openPromoModal('${c.id}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg font-semibold transition flex items-center gap-1" title="Enviar WhatsApp">
+              <button onclick="openPromoModal('${c.id}')" class="text-xs bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 px-2 py-1 rounded-lg font-semibold transition flex items-center gap-1" title="Enviar WhatsApp">
                 <span>📲 Promo</span>
               </button>
-              <button onclick="viewCustomerHistory('${c.id}')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border px-2 py-1 rounded-lg font-semibold transition" title="Ver compras">
+              <button onclick="viewCustomerHistory('${c.id}')" class="text-xs bg-slate-800 hover:bg-indigo-950 hover:text-indigo-300 border border-slate-700 px-2 py-1 rounded-lg font-semibold transition" title="Ver compras">
                 Historial 🛍️
               </button>
-              <button onclick="editCustomer('${c.id}')" class="text-xs p-1 text-slate-500 hover:text-indigo-600" title="Editar">✏️</button>
-              <button onclick="deleteCustomer('${c.id}')" class="text-xs p-1 text-slate-400 hover:text-rose-600 col-actions ${currentRole === 'admin' ? '' : 'hidden'}" title="Eliminar cliente">🗑️</button>
+              <button onclick="editCustomer('${c.id}')" class="text-xs p-1 text-slate-400 hover:text-indigo-400" title="Editar">✏️</button>
+              <button onclick="deleteCustomer('${c.id}')" class="text-xs p-1 text-slate-400 hover:text-rose-400 col-actions ${currentRole === 'admin' ? '' : 'hidden'}" title="Eliminar cliente">🗑️</button>
             </div>
           </td>
         `;
@@ -1965,7 +1965,7 @@
         custSales.forEach(s => {
           total += s.total;
           const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-50';
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
           tr.innerHTML = `
             <td class="p-2.5 text-slate-500">${s.date}</td>
             <td class="p-2.5 font-bold text-slate-800">${s.productName} (x${s.quantity})</td>
@@ -2033,16 +2033,16 @@
       tbody.innerHTML = '';
       purchases.forEach(p => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition';
+        tr.className = 'hover:bg-slate-800/50 transition-colors';
         tr.innerHTML = `
-          <td class="p-3.5 text-xs text-slate-500">${p.date}</td>
-          <td class="p-3.5 font-bold text-slate-900">${p.supplier}</td>
-          <td class="p-3.5">${p.productName}</td>
-          <td class="p-3.5 text-center">${p.quantity}</td>
-          <td class="p-3.5 text-right text-slate-600">${formatMoney(p.unitCost)}</td>
-          <td class="p-3.5 text-right font-bold text-slate-900">${formatMoney(p.total)}</td>
+          <td class="p-3.5 text-xs text-slate-400">${p.date}</td>
+          <td class="p-3.5 font-bold text-slate-100">${p.supplier}</td>
+          <td class="p-3.5 text-slate-200">${p.productName}</td>
+          <td class="p-3.5 text-center text-slate-200">${p.quantity}</td>
+          <td class="p-3.5 text-right text-slate-300">${formatMoney(p.unitCost)}</td>
+          <td class="p-3.5 text-right font-bold text-slate-100">${formatMoney(p.total)}</td>
           <td class="p-3.5 text-center col-actions ${isAdmin ? '' : 'hidden'}">
-            <button onclick="cancelPurchase('${p.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded" title="Eliminar Compra y Restar Stock">🗑️</button>
+            <button onclick="cancelPurchase('${p.id}')" class="p-1.5 text-slate-400 hover:text-rose-400 rounded" title="Eliminar Compra y Restar Stock">🗑️</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -2077,13 +2077,13 @@
 
       transactions.forEach(t => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50';
+        tr.className = 'hover:bg-slate-800/50 transition-colors';
         tr.innerHTML = `
-          <td class="p-3.5 text-xs text-slate-500">${t.date}</td>
-          <td class="p-3.5"><span class="text-xs px-2 py-0.5 rounded-full font-bold ${t.isIncome ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${t.type}</span></td>
-          <td class="p-3.5 font-medium text-slate-800">${t.desc}</td>
-          <td class="p-3.5 text-center text-slate-600">${t.qty} u.</td>
-          <td class="p-3.5 text-right font-bold ${t.isIncome ? 'text-emerald-600' : 'text-rose-600'}">${t.isIncome ? '+' : '-'} ${formatMoney(t.amount)}</td>
+          <td class="p-3.5 text-xs text-slate-400">${t.date}</td>
+          <td class="p-3.5"><span class="text-xs px-2.5 py-0.5 rounded-full font-bold border ${t.isIncome ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40' : 'bg-rose-950/80 text-rose-300 border-rose-500/40'}">${t.type}</span></td>
+          <td class="p-3.5 font-medium text-slate-200">${t.desc}</td>
+          <td class="p-3.5 text-center text-slate-300">${t.qty} u.</td>
+          <td class="p-3.5 text-right font-bold ${t.isIncome ? 'text-emerald-400' : 'text-rose-400'}">${t.isIncome ? '+' : '-'} ${formatMoney(t.amount)}</td>
         `;
         tbody.appendChild(tr);
       });
